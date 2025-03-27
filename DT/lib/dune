@@ -1,2 +1,3 @@
 (library
- (name DT))
+ (name DT)
+ (libraries ANSITerminal))

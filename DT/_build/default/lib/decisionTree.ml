@@ -1,40 +1,29 @@
-type point = float * float
+type point = float array
 type label = int
 type dataset = point list * label list
 
-type split_axis = X | Y
+type split_axis = int
 type decision_tree =
   | Leaf of label
   | Node of split_axis * float * decision_tree * decision_tree
 
-(* Count labels *)
-let count_occurrences labels =
-  List.fold_left (fun acc l ->
-    let count = try List.assoc l acc with Not_found -> 0 in
-    (l, count + 1) :: List.remove_assoc l acc
-  ) [] labels
-
-(* Entropy function *)
-let entropy labels =
-  let total = float_of_int (List.length labels) in
-  let counts = count_occurrences labels in
-  List.fold_left (fun acc (_, count) ->
-    let p = float_of_int count /. total in
-    acc -. p *. log p /. log 2.0
-  ) 0.0 counts
-
 (* Split dataset on axis and threshold *)
 let split_dataset ((points, labels) : dataset) (axis : split_axis) (threshold : float) : dataset * dataset =
-  List.fold_left2 (fun ((l_pts, l_lbls), (r_pts, r_lbls)) (x, y) lbl ->
-    let value = match axis with X -> x | Y -> y in
+  List.fold_left2 (fun ((l_pts, l_lbls), (r_pts, r_lbls)) pt lbl ->
+    let value = pt.(axis) in
     if value <= threshold then
-      (( (x, y) :: l_pts, lbl :: l_lbls ), (r_pts, r_lbls))
+      (( pt :: l_pts, lbl :: l_lbls ), (r_pts, r_lbls))
     else
-      ((l_pts, l_lbls), ( (x, y) :: r_pts, lbl :: r_lbls ))
+      ((l_pts, l_lbls), ( pt :: r_pts, lbl :: r_lbls ))
   ) (([], []), ([], [])) points labels
 
 (* Try all candidate splits and find the best *)
 let best_split (points, labels) =
+  let dim = match points with
+    | [] -> 0
+    | h :: _ -> Array.length h
+  in
+
   (* Helper: generate adjacent pairs from a sorted list *)
   let rec pairs lst =
     match lst with
@@ -42,25 +31,27 @@ let best_split (points, labels) =
     | _ -> []
   in
 
-  let axes = [X; Y] in
+  let rec axes n = 
+    if n = 0 then [0]
+    else n :: axes (n-1) 
+  in
 
   (* Generate candidate (axis, threshold) pairs *)
   let candidates =
     List.flatten (
       List.map (fun axis ->
-        let values = List.map (fun (x, y) -> match axis with X -> x | Y -> y) points in
+        let values = List.map (fun pt -> pt.(axis)) points in
         let sorted = List.sort_uniq compare values in
         let thresholds = List.map (fun (a, b) -> (a +. b) /. 2.0) (pairs sorted) in
         List.map (fun t -> (axis, t)) thresholds
-      ) axes
+      ) (axes (dim-1))
     )
   in
 
-  let total_entropy = entropy labels in
-
+  let total_entropy = Utils.entropy labels in
   (* Handle edge case where no valid candidates exist *)
   match candidates with
-  | [] -> (X, 0.0)  (* Fallback split; could also return an option for safety *)
+  | [] -> (0, 0.0)  (* Fallback split; could also return an option for safety *)
   | _ ->
       let best_axis, best_thresh, _ =
         List.fold_left (fun (best_axis, best_thresh, best_gain) (axis, t) ->
@@ -75,23 +66,23 @@ let best_split (points, labels) =
           else
             let gain =
               total_entropy
-              -. (l_size /. size) *. entropy l_lbls
-              -. (r_size /. size) *. entropy r_lbls
+              -. (l_size /. size) *. Utils.entropy l_lbls
+              -. (r_size /. size) *. Utils.entropy r_lbls
             in
             if gain > best_gain then (axis, t, gain)
             else (best_axis, best_thresh, best_gain)
-        ) (X, 0.0, -.1.0) candidates
+        ) (0, 0.0, -.1.0) candidates
       in
       (best_axis, best_thresh)
 
 
 (* Majority label *)
 let majority_label labels =
-  fst (List.hd (List.sort (fun (_, a) (_, b) -> compare b a) (count_occurrences labels)))
+  fst (List.hd (List.sort (fun (_, a) (_, b) -> compare b a) (Utils.count_occurrences labels)))
 
 (* Build decision tree recursively *)
-let rec build_tree (points, labels) depth max_depth =
-  match count_occurrences labels with
+let rec build_tree (points, labels) (depth:int) (max_depth:int) =
+  match Utils.count_occurrences labels with
   | [(l, _)] -> Leaf l
   | _ when depth >= max_depth || List.length labels < 2 -> Leaf (majority_label labels)
   | _ ->
@@ -102,9 +93,9 @@ let rec build_tree (points, labels) depth max_depth =
       Node (axis, threshold, left_tree, right_tree)
 
 (* Prediction *)
-let rec predict tree (x, y) =
+let rec predict (tree : decision_tree) (pt : point) : label =
   match tree with
   | Leaf l -> l
   | Node (axis, threshold, left, right) ->
-      let value = match axis with X -> x | Y -> y in
-      if value <= threshold then predict left (x, y) else predict right (x, y)
+      let value = pt.(axis) in
+      if value <= threshold then predict left pt else predict right pt

@@ -1,3 +1,5 @@
+open ANSITerminal
+
 type mesh = {
   x_min : float;
   y_min : float;
@@ -16,16 +18,12 @@ let rec pt_list_from_mesh_y (x,y) mesh =
   else (pt_list_from_mesh_x (x,y) mesh) :: (pt_list_from_mesh_y (x, y-.mesh.y_unit) mesh)
 
 let pt_list_from_mesh mesh = pt_list_from_mesh_y (mesh.x_min,mesh.y_max) mesh
-  
-let print_symb_list symb_list = 
-  let list_f = fun lst -> List.fold_left ( ^ ) "" lst in
-  List.map (fun lst -> lst |> list_f |> print_endline) symb_list
 
 let plot_DT mesh f dict =
   let pt_f = fun (x,y) -> (x,y) |> f |> dict in
-  let list_f = fun lst -> List.map pt_f lst in
+  let list_f = fun lst -> let _ = List.map pt_f lst in (); print_endline "" in
   let list2d_f = fun lst -> List.map list_f lst in
-  mesh |> pt_list_from_mesh |> list2d_f |> print_symb_list
+  mesh |> pt_list_from_mesh |> list2d_f
 
 let mesh_demo = { x_min = -10.0; y_min = -10.0; x_max = 10.0; y_max = 10.0; x_unit = 0.5; y_unit = 0.5 };;
 
@@ -33,4 +31,5 @@ let f_demo (x,y) = y -. x*.x
 
 let f_demo1 (x,y) = (x*.x+.y*.y)/.(x+.y)-.4.0
 
-let dict_demo x = if x > 0.0 then "##" else "__"
+let dict_demo x = if x > 0.0 then ANSITerminal.print_string [ ANSITerminal.blue; ANSITerminal.on_blue ] "  " 
+                  else ANSITerminal.print_string [ ANSITerminal.red; ANSITerminal.on_red ] "  "
