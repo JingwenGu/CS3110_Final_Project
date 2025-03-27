@@ -75,16 +75,11 @@ let best_split (points, labels) =
       in
       (best_axis, best_thresh)
 
-
-(* Majority label *)
-let majority_label labels =
-  fst (List.hd (List.sort (fun (_, a) (_, b) -> compare b a) (Utils.count_occurrences labels)))
-
 (* Build decision tree recursively *)
 let rec build_tree (points, labels) (depth:int) (max_depth:int) =
   match Utils.count_occurrences labels with
   | [(l, _)] -> Leaf l
-  | _ when depth >= max_depth || List.length labels < 2 -> Leaf (majority_label labels)
+  | _ when depth >= max_depth || List.length labels < 2 -> Leaf (Utils.majority_label labels)
   | _ ->
       let axis, threshold = best_split (points, labels) in
       let (left, right) = split_dataset (points, labels) axis threshold in

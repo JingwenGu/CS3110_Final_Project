@@ -1,3 +1,5 @@
+let print_list lst = print_endline((List.fold_left (fun s x -> s ^ (string_of_int x) ^ ";") "[" lst) ^ "]")
+
 let count_occurrences labels =
   List.fold_left (fun acc l ->
     let count = try List.assoc l acc with Not_found -> 0 in
@@ -5,7 +7,14 @@ let count_occurrences labels =
   ) [] labels
 
 let majority_label labels =
-  fst (List.hd (List.sort (fun (_, a) (_, b) -> compare b a) (count_occurrences labels)))
+  (* print_endline "utils/majority_label";
+  print_endline (string_of_int(List.length (count_occurrences labels)));
+  (* if List.length (count_occurrences labels) = 0 then print_list labels else (); *)
+  print_list labels; *)
+  try 
+    fst (List.hd (List.sort (fun (_, a) (_, b) -> compare b a) (count_occurrences labels)))
+  with
+    | _ -> 0
 
 let entropy labels =
   let total = float_of_int (List.length labels) in
