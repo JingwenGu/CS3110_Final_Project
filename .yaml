@@ -7,11 +7,11 @@ group:
     netid: tdl57
 
 pm:
-  name: Kea-Roy Ong
-  netid: ko353
+  name: Ruth Taddesse
+  netid: ryt5
 publish: true
 title: "ForestML: A Random Forest Implementation in OCaml" 
-# IF THERE'S BETTER NAME PLEASE MAKE A CHANGE AND DELETE THE COMMET
+# IF THERE'S BETTER NAME PLEASE MAKE A CHANGE AND DELETE THE COMMENT
 git-repo: "https://github.com/JingwenGu/CS3110_Final_Project"
 demo-video-url: "NEED TO BE FILLED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
 # ADD THE VIDEO LINK HERE AND DELETE THE COMMENT
@@ -25,4 +25,4 @@ desc: >
   In addition to a modular and extensible core library, the 
   project includes a graphical user interface for training models 
   and visualizing decision boundaries, predictions, and performance metrics.
-# IF THERE'S BETTER DESCRIPTION PLEASE MAKE A CHANGE AND DELETE THE COMMET
+# IF THERE'S BETTER DESCRIPTION PLEASE MAKE A CHANGE AND DELETE THE COMMENT
