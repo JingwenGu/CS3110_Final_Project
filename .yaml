@@ -1,0 +1,27 @@
+group:  
+  - name: Jingwen Gu
+    netid: jg2369
+  - name: Daniel Lin
+    netid: cl2765
+  - name: Tian Li Liu
+    netid: tdl57
+
+pm:
+  name: Kea-Roy Ong
+  netid: ko353
+publish: true
+title: "ForestML: A Random Forest Implementation in OCaml" 
+# IF THERE'S BETTER NAME PLEASE MAKE A CHANGE AND DELETE THE COMMET
+git-repo: "https://github.com/JingwenGu/CS3110_Final_Project"
+demo-video-url: "NEED TO BE FILLED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+# ADD THE VIDEO LINK HERE AND DELETE THE COMMENT
+desc: >
+  Our project is a machine learning library written in OCaml
+  that implements the Random Forest algorithm from scratch.
+  It supports both classification and regression tasks, with
+  features like bootstrapped sampling, feature randomness, and 
+  handling of both discrete and continuous attributes.
+
+  In addition to a modular and extensible core library, the 
+  project includes a graphical user interface for training models 
+  and visualizing decision boundaries, predictions, and performance metrics.
