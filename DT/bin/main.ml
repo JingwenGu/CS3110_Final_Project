@@ -1,4 +1,4 @@
-(* open DT *)
+open DT
 
 let () =
   let dataset = [
@@ -74,3 +74,157 @@ let () =
   ) test_points_arr;
   let mesh_spiral = { DT.Display2D.x_min = -15.0; y_min = -15.0; x_max = 15.0; y_max = 15.0; x_unit = 0.5; y_unit = 0.5 } in
   let _ = DT.Display2D.plot_DT mesh_spiral (fun pt ->float_of_int(DT.RandomForest.predict_forest forest (convert_point pt))) DT.Display2D.dict_demo in ();
+
+
+(* open Graphics
+open Printf
+
+(** Window and World Settings *)
+let window_width = 800
+let window_height = 800
+
+(** For decision tree (2D version and array-based version) *)
+let world_x_min = 0.0
+let world_y_min = 0.0
+let world_x_max = 10.0
+let world_y_max = 10.0
+let world_width = world_x_max -. world_x_min
+let world_height = world_y_max -. world_y_min
+
+let world_to_screen (x, y) =
+  let sx = int_of_float (((x -. world_x_min) /. world_width) *. float_of_int window_width) in
+  let sy = int_of_float (((y -. world_y_min) /. world_height) *. float_of_int window_height) in
+  (sx, sy)
+
+(** For random forest on spiral data *)
+let spiral_x_min = -15.0
+let spiral_y_min = -15.0
+let spiral_x_max = 15.0
+let spiral_y_max = 15.0
+let spiral_width = spiral_x_max -. spiral_x_min
+let spiral_height = spiral_y_max -. spiral_y_min
+
+let world_to_screen_spiral (x, y) =
+  let sx = int_of_float (((x -. spiral_x_min) /. spiral_width) *. float_of_int window_width) in
+  let sy = int_of_float (((y -. spiral_y_min) /. spiral_height) *. float_of_int window_height) in
+  (sx, sy)
+
+(**Color Mapping*)
+let color_of_label label =
+  match label with
+  | 0 -> red
+  | 1 -> blue
+  | _ -> green
+
+(** Drawing Functions*)
+
+(** Draw a decision boundary on the current Graphics window.
+   f is a function mapping world coordinates to a label. *)
+let draw_decision_boundary world_min_x world_min_y world_width world_height f =
+  let step = 5 in
+  for i = 0 to (window_width - 1) / step do
+    for j = 0 to (window_height - 1) / step do
+      let x = i * step in
+      let y = j * step in
+      let wx = (float_of_int x) /. float_of_int window_width *. world_width +. world_min_x in
+      let wy = (float_of_int y) /. float_of_int window_height *. world_height +. world_min_y in
+      let label = f (wx, wy) in
+      set_color (color_of_label label);
+      fill_rect x y step step
+    done
+  done
+
+(** Draw a marker at a given world coordinate, along with the predicted label *)
+let draw_marker (x, y) label to_screen =
+  let (sx, sy) = to_screen (x, y) in
+  set_color black;
+  fill_circle sx sy 5;
+  moveto (sx + 10) (sy + 10);
+  draw_string (sprintf "Label: %d" label)
+
+(** Main Program *)
+let () =
+  Random.self_init ();
+
+  (** Open Graphics window *)
+  open_graph (sprintf " %dx%d" window_width window_height);
+
+  (** Decision Tree (2D version) *)
+  set_window_title "Decision Tree2D - Graphics Interface";
+
+  let dataset = [
+    (1.0, 1.0); (2.0, 1.5); (1.5, 2.0);   (* bottom-left quadrant → class 0 *)
+    (1.0, 9.0); (2.0, 8.5); (1.5, 7.5);   (* top-left quadrant    → class 1 *)
+    (8.0, 1.0); (9.0, 1.5); (7.5, 2.0);   (* bottom-right         → class 1 *)
+    (8.0, 9.0); (9.0, 8.0); (7.5, 7.5);   (* top-right            → class 0 *)
+    (5.0, 5.0); (5.5, 5.5); (4.5, 4.5)    (* center cluster       → class 0 *)
+  ] in
+  let labels = [0; 0; 0; 1; 1; 1; 1; 1; 1; 0; 0; 0; 0; 0; 0] in
+
+  let tree = DT.DecisionTree2D.build_tree (dataset, labels) 0 3 in
+  let test_points = [(2.5, 2.5); (7.0, 3.0); (7.5, 9.0); (0.5, 9.5); (5.0, 5.0)] in
+
+  (** Draw decision boundary using DecisionTree2D *)
+  draw_decision_boundary world_x_min world_y_min world_width world_height
+    (fun (x, y) -> DT.DecisionTree2D.predict tree (x, y));
+  (** Mark test points *)
+  List.iter (fun pt ->
+    let label = DT.DecisionTree2D.predict tree pt in
+    draw_marker pt label world_to_screen;
+    printf "DecisionTree2D: Point (%f, %f) => Class %d\n" (fst pt) (snd pt) label
+  ) test_points;
+  let _ = wait_next_event [Key_pressed] in
+
+  (** Decision Tree (Array version) *)
+  clear_graph ();
+  set_window_title "Decision Tree (Array) - Graphics Interface";
+
+  let dataset_arr = List.map (fun (x, y) -> [| x; y |]) dataset in
+  let tree_arr = DT.DecisionTree.build_tree (dataset_arr, labels) 0 3 in
+
+  draw_decision_boundary world_x_min world_y_min world_width world_height
+    (fun (x, y) -> DT.DecisionTree.predict tree_arr [| x; y |]);
+  List.iter (fun (x, y) ->
+    let label = DT.DecisionTree.predict tree_arr [| x; y |] in
+    draw_marker (x, y) label world_to_screen;
+    printf "DecisionTree (Array): Point (%f, %f) => Class %d\n" x y label
+  ) test_points;
+  let _ = wait_next_event [Key_pressed] in
+
+  (** Random Forest on Spiral Data *)
+  clear_graph ();
+  set_window_title "Random Forest on Spiral Data - Graphics Interface";
+
+  let generate_two_spirals n =
+    let theta_max = 10.0 *. Float.pi in
+    let step = theta_max /. float_of_int n in
+    let spiral_a = List.init n (fun i ->
+      let theta = step *. float_of_int i in
+      let r = 0.5 *. theta in  
+      (r *. cos theta, r *. sin theta), 0
+    ) in
+    let spiral_b = List.init n (fun i ->
+      let theta = step *. float_of_int i +. Float.pi in
+      let r = 0.5 *. theta in
+      (r *. cos theta, r *. sin theta), 1
+    ) in
+    spiral_a @ spiral_b in
+  
+  let points_labels = generate_two_spirals 100 in
+  let points_spiral, labels_spiral = List.split points_labels in
+  let dataset_spiral = List.map (fun (x, y) -> [| x; y |]) points_spiral in
+  let forest = DT.RandomForest.train_forest (dataset_spiral, labels_spiral)
+                  (DT.RandomForest.Ratio 0.6) 50 30 in
+
+  draw_decision_boundary spiral_x_min spiral_y_min spiral_width spiral_height
+    (fun (x, y) -> DT.RandomForest.predict_forest forest [| x; y |]);
+  List.iter (fun pt ->
+    let point_arr = [| fst pt; snd pt |] in
+    let label = DT.RandomForest.predict_forest forest point_arr in
+    draw_marker pt label world_to_screen_spiral;
+    printf "RandomForest: Point (%f, %f) => Class %d\n" (fst pt) (snd pt) label
+  ) test_points;
+
+  let _ = wait_next_event [Key_pressed] in
+  close_graph ();
+  () *)
