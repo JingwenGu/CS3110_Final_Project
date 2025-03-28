@@ -1,17 +1,21 @@
-#Prerequisites
+##Installation
 
-OCaml
-Dune
-Git
+###Prerequisites
 
-#Setup
+-OCaml
+-Dune
+-Git
 
+###Setup
+
+```
 git clone git@github.com:JingwenGu/CS3110_Final_Project.git
 
 cd CS3110_Final_Project/DT
 
 opam install graphics ANSITerminal
-
-#Usage
-
+```
+###Usage
+```
 dune exec bin/main.exe
+```
