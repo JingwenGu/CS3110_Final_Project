@@ -91,6 +91,22 @@ let world_y_max = 10.0
 let world_width = world_x_max -. world_x_min
 let world_height = world_y_max -. world_y_min
 
+let rec wait_for_space_or_q () =
+  let status = wait_next_event [Key_pressed] in
+  if status.key = ' ' || status.key = 'q' then status.key
+  else wait_for_space_or_q ()
+
+let draw_center_instructions text =
+  let rect_width = window_width / 2 in
+  let rect_height = 100 in
+  let rect_x = (window_width - rect_width) / 2 in
+  let rect_y = (window_height - rect_height) / 2 in
+  set_color white;
+  fill_rect rect_x rect_y rect_width rect_height;
+  set_color black;
+  moveto (rect_x + 10) (rect_y + (rect_height / 2));
+  draw_string text
+
 let world_to_screen (x, y) =
   let sx = int_of_float (((x -. world_x_min) /. world_width) *. float_of_int window_width) in
   let sy = int_of_float (((y -. world_y_min) /. world_height) *. float_of_int window_height) in
@@ -136,11 +152,12 @@ let draw_decision_boundary world_min_x world_min_y world_width world_height f =
 
 (** Draw a marker at a given world coordinate, along with the predicted label *)
 let draw_marker (x, y) label to_screen =
-  let (sx, sy) = to_screen (x, y) in
-  set_color black;
-  fill_circle sx sy 5;
-  moveto (sx + 10) (sy + 10);
-  draw_string (sprintf "Label: %d" label)
+let (sx, sy) = to_screen (x, y) in
+set_color black;
+fill_circle sx sy 5;
+set_color white;  
+moveto (sx + 10) (sy + 10);
+draw_string (sprintf "Label: %d" label)
 
 (** Main Program *)
 let () =
@@ -173,7 +190,12 @@ let () =
     draw_marker pt label world_to_screen;
     printf "DecisionTree2D: Point (%f, %f) => Class %d\n" (fst pt) (snd pt) label
   ) test_points;
-  let _ = wait_next_event [Key_pressed] in
+
+  draw_center_instructions "Decision Tree2D: Press SPACE for next screen or Q to quit.";
+  let key = wait_for_space_or_q () in
+  if key = 'q' then (close_graph (); exit 0);
+  set_color white;
+  fill_rect ((window_width - (window_width / 2)) / 2) ((window_height - 100) / 2) (window_width / 2) 100;
 
   (** Decision Tree (Array version) *)
   clear_graph ();
@@ -189,7 +211,11 @@ let () =
     draw_marker (x, y) label world_to_screen;
     printf "DecisionTree (Array): Point (%f, %f) => Class %d\n" x y label
   ) test_points;
-  let _ = wait_next_event [Key_pressed] in
+  draw_center_instructions "Decision Tree (Array): Press SPACE for next screen or Q to quit.";
+  let key = wait_for_space_or_q () in
+  if key = 'q' then (close_graph (); exit 0);
+  set_color white;
+  fill_rect ((window_width - (window_width / 2)) / 2) ((window_height - 100) / 2) (window_width / 2) 100;
 
   (** Random Forest on Spiral Data *)
   clear_graph ();
@@ -224,7 +250,11 @@ let () =
     draw_marker pt label world_to_screen_spiral;
     printf "RandomForest: Point (%f, %f) => Class %d\n" (fst pt) (snd pt) label
   ) test_points;
-
-  let _ = wait_next_event [Key_pressed] in
+  
+  draw_center_instructions "Random Forest on Spiral Data: Press SPACE to quit.";
+  let key = wait_for_space_or_q () in
+  if key = 'q' then (close_graph (); exit 0);
+  set_color white;
+  fill_rect ((window_width - (window_width / 2)) / 2) ((window_height - 100) / 2) (window_width / 2) 100;
   close_graph ();
   () *)
