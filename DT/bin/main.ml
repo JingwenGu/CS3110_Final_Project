@@ -1,4 +1,4 @@
-open DT
+(* open DT
 
 let () =
   let dataset = [
@@ -73,10 +73,10 @@ let () =
     Printf.printf "Point (%f, %f) => Class %d\n" (pt.(0)) (pt.(1)) label
   ) test_points_arr;
   let mesh_spiral = { DT.Display2D.x_min = -15.0; y_min = -15.0; x_max = 15.0; y_max = 15.0; x_unit = 0.5; y_unit = 0.5 } in
-  let _ = DT.Display2D.plot_DT mesh_spiral (fun pt ->float_of_int(DT.RandomForest.predict_forest forest (convert_point pt))) DT.Display2D.dict_demo in ();
+  let _ = DT.Display2D.plot_DT mesh_spiral (fun pt ->float_of_int(DT.RandomForest.predict_forest forest (convert_point pt))) DT.Display2D.dict_demo in (); *)
 
 
-(* open Graphics
+open Graphics
 open Printf
 
 (** Window and World Settings *)
@@ -217,6 +217,44 @@ let () =
   set_color white;
   fill_rect ((window_width - (window_width / 2)) / 2) ((window_height - 100) / 2) (window_width / 2) 100;
 
+   (** AdaBoost Visualization *)
+  clear_graph ();
+  set_window_title "AdaBoost - Graphics Interface";
+  
+  (* Convert dataset to array format for AdaBoost *)
+  let adaboost_dataset_arr = List.map (fun (x, y) -> [| x; y |]) dataset in
+  
+  (** Convert labels to AdaBoost format (-1/+1) *)
+  let adaboost_labels = DT.AdaBoost.adaboost_convert_labels labels in
+  
+  (**Train AdaBoost with 30 weak learners *)
+  let adaboost_rounds = 30 in
+  let adaboost_model = DT.AdaBoost.adaboost_train_ada (adaboost_dataset_arr, adaboost_labels) adaboost_rounds in
+  
+  printf "AdaBoost model trained with %d weak learners\n" adaboost_rounds;
+  
+  (** Function to predict using AdaBoost and convert back to 0/1 labels *)
+  let predict_adapter (x, y) =
+    let pred = DT.AdaBoost.adaboost_predict_ada adaboost_model [| x; y |] in
+    DT.AdaBoost.adaboost_convert_prediction pred
+  in
+  
+  (** Draw decision boundary using AdaBoost *)
+  draw_decision_boundary world_x_min world_y_min world_width world_height predict_adapter;
+  
+  (** Draw test points with AdaBoost predictions *)
+  List.iter (fun (x, y) ->
+    let label = predict_adapter (x, y) in
+    draw_marker (x, y) label world_to_screen;
+    printf "AdaBoost: Point (%f, %f) => Class %d\n" x y label
+  ) test_points;
+  
+  draw_center_instructions "AdaBoost: Press SPACE for next screen or Q to quit.";
+  let key = wait_for_space_or_q () in
+  if key = 'q' then (close_graph (); exit 0);
+  set_color white;
+  fill_rect ((window_width - (window_width / 2)) / 2) ((window_height - 100) / 2) (window_width / 2) 100;
+
   (** Random Forest on Spiral Data *)
   clear_graph ();
   set_window_title "Random Forest on Spiral Data - Graphics Interface";
@@ -250,11 +288,43 @@ let () =
     draw_marker pt label world_to_screen_spiral;
     printf "RandomForest: Point (%f, %f) => Class %d\n" (fst pt) (snd pt) label
   ) test_points;
-  
-  draw_center_instructions "Random Forest on Spiral Data: Press SPACE to quit.";
+
+  (** AdaBoost on Spiral Data *)
+  draw_center_instructions "Random Forest on Spiral Data: Press SPACE for AdaBoost on Spiral or Q to quit.";
   let key = wait_for_space_or_q () in
   if key = 'q' then (close_graph (); exit 0);
   set_color white;
   fill_rect ((window_width - (window_width / 2)) / 2) ((window_height - 100) / 2) (window_width / 2) 100;
+  
+  clear_graph ();
+  set_window_title "AdaBoost on Spiral Data - Graphics Interface";
+
+  (** Convert spiral labels to AdaBoost format *)
+  let adaboost_spiral_labels = DT.AdaBoost.adaboost_convert_labels labels_spiral in
+  
+  (** Train AdaBoost with more weak learners for complex spiral data *)
+  let adaboost_spiral_rounds = 30 in
+  let adaboost_spiral_model = DT.AdaBoost.adaboost_train_ada (dataset_spiral, adaboost_spiral_labels) adaboost_spiral_rounds in
+  
+  (** Function to predict using AdaBoost on spiral data *)
+  let predict_spiral_adapter (x, y) =
+    let pred = DT.AdaBoost.adaboost_predict_ada adaboost_spiral_model [| x; y |] in
+    DT.AdaBoost.adaboost_convert_prediction pred
+  in
+  
+  (** Draw decision boundary using AdaBoost on spiral data *)
+  draw_decision_boundary spiral_x_min spiral_y_min spiral_width spiral_height predict_spiral_adapter;
+  
+  (** Draw test points with AdaBoost predictions *)
+  List.iter (fun pt ->
+    let x, y = pt in
+    let label = predict_spiral_adapter (x, y) in
+    draw_marker pt label world_to_screen_spiral;
+    printf "AdaBoost on Spiral: Point (%f, %f) => Class %d\n" x y label
+  ) test_points;
+  
+  draw_center_instructions "AdaBoost on Spiral Data: Press SPACE to quit.";
+  let key = wait_for_space_or_q () in
+  if key = 'q' || key = ' ' then (close_graph (); exit 0);
   close_graph ();
-  () *)
+  ()

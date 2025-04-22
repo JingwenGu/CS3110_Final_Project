@@ -1,4 +1,4 @@
 (lang dune 3.17)
 (name DT)
 (sections (lib .) (bin ../../bin))
-(files (lib (META dune-package opam)) (bin (DT.exe)))
+(files (lib (META dune-package opam)) (bin (DT)))

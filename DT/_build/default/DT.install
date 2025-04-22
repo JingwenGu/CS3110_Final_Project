@@ -4,5 +4,5 @@ lib: [
   "_build/install/default/lib/DT/opam"
 ]
 bin: [
-  "_build/install/default/bin/DT.exe"
+  "_build/install/default/bin/DT"
 ]
