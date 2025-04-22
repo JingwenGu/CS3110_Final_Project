@@ -2,6 +2,8 @@ open OUnit2
 open DT.DecisionTree
 open DT.DecisionTree2D
 open DT.RandomForest
+open DT.Display2D
+open DT.Utils
 
 let eps = 1e-6
 
@@ -126,12 +128,15 @@ let gen_small_dt_tests () =
       let l, r = DT.DecisionTree.split_dataset ds 0 2.5 in
       assert_equal 2 (List.length (fst l));
       assert_equal 2 (List.length (fst r)) );
-    ( "dt_best" >:: fun _ -> (* Failure *)
+    ( "dt_best" >:: fun _ ->
+      (* Failure *)
       let a, th = DT.DecisionTree.best_split ds in
       assert_equal 0 a;
       assert_bool "thr" (feq th 2.5) );
-    ("dt_depth" >:: fun _ -> assert_equal 2 (dep1 t)); (* failure *)
-    ( "dt_pred_left" >:: fun _ -> (* failure *)
+    ("dt_depth" >:: fun _ -> assert_equal 2 (dep1 t));
+    (* failure *)
+    ( "dt_pred_left" >:: fun _ ->
+      (* failure *)
       assert_equal 0 (DT.DecisionTree.predict t [| 1. |]) );
     ( "dt_pred_right" >:: fun _ ->
       assert_equal 1 (DT.DecisionTree.predict t [| 4. |]) );
@@ -182,7 +187,8 @@ let gen_dt2_basic () =
   let ds = grid 4 3 in
   let t = DT.DecisionTree2D.build_tree ds 0 3 in
   [
-    ( "dt2_pred" >:: fun _ -> (* failure *)
+    ( "dt2_pred" >:: fun _ ->
+      (* failure *)
       List.iter2
         (fun p l -> assert_equal l (DT.DecisionTree2D.predict t p))
         (fst ds) (snd ds) );
@@ -215,7 +221,8 @@ let gen_dt2_random m =
   List.init m (fun k ->
       let w = k + 3 in
       let h = k + 2 in
-      "dt2_rand_" ^ string_of_int k >:: fun _ -> (* failure in all cases *)
+      "dt2_rand_" ^ string_of_int k >:: fun _ ->
+      (* failure in all cases *)
       let ds = grid w h in
       let t = DT.DecisionTree2D.build_tree ds 0 4 in
       List.iter2
@@ -271,7 +278,8 @@ let gen_rf_tie () =
 let gen_rf_random s =
   List.map
     (fun sd ->
-      "rf_rand_" ^ string_of_int sd >:: fun _ -> (* failure in some cases*)
+      "rf_rand_" ^ string_of_int sd >:: fun _ ->
+      (* failure in some cases*)
       Random.init sd;
       let xs = List.init 30 (fun _ -> Random.float 10. -. 5.) in
       let ds = ds1 xs in
@@ -336,8 +344,150 @@ let suites =
       gen_noise ();
     ]
 
+let feq a b = Float.abs (a -. b) < 1e-10
+
+let list_eq cmp l1 l2 =
+  List.length l1 = List.length l2 && List.for_all2 cmp l1 l2
+
+let pair_eq (ax, ay) (bx, by) = feq ax bx && feq ay by
+
+(* Display2D: pt_list_from_mesh_x*)
+
+let suite_pt_list_from_mesh_x () =
+  let mesh =
+    {
+      DT.Display2D.x_min = 0.;
+      y_min = 0.;
+      x_max = 1.;
+      y_max = 1.;
+      x_unit = 1.;
+      y_unit = 1.;
+    }
+  in
+  let row0 = DT.Display2D.pt_list_from_mesh_x (0., 0.) mesh in
+  let expect = [ (0., 0.); (1., 0.) ] in
+  let row_over = DT.Display2D.pt_list_from_mesh_x (2., 0.) mesh in
+  "pt_list_from_mesh_x"
+  >::: [
+         ( "base_row" >:: fun _ ->
+           assert_bool "row eq" (list_eq pair_eq row0 expect) );
+         ("beyond_max" >:: fun _ -> assert_equal [] row_over);
+       ]
+
+(* Display2D: pt_list_from_mesh_y + pt_list_from_mesh*)
+
+let suite_pt_list_from_mesh_y () =
+  let mesh =
+    {
+      DT.Display2D.x_min = 0.;
+      y_min = 0.;
+      x_max = 1.;
+      y_max = 1.;
+      x_unit = 1.;
+      y_unit = 1.;
+    }
+  in
+  let rows = DT.Display2D.pt_list_from_mesh_y (0., 1.) mesh in
+  let grid = DT.Display2D.pt_list_from_mesh mesh in
+  let expected_rows = [ [ (0., 1.); (1., 1.) ]; [ (0., 0.); (1., 0.) ] ] in
+  "pt_list_from_mesh_y"
+  >::: [
+         ("row_count" >:: fun _ -> assert_equal 2 (List.length rows));
+         ( "row0_values" >:: fun _ ->
+           assert_bool "r0"
+             (list_eq pair_eq (List.hd rows) [ (0., 1.); (1., 1.) ]) );
+         ( "rows_expected" >:: fun _ ->
+           assert_bool "rows_eq" (list_eq (list_eq pair_eq) rows expected_rows)
+         );
+         ( "grid_equals" >:: fun _ ->
+           assert_bool "grid" (list_eq (list_eq pair_eq) rows grid) );
+       ]
+
+(* Display2D: plot_DT (functional validation via effect counting)*)
+
+let suite_plot_DT () =
+  let mesh =
+    {
+      DT.Display2D.x_min = -1.;
+      y_min = -1.;
+      x_max = 1.;
+      y_max = 1.;
+      x_unit = 1.;
+      y_unit = 1.;
+    }
+  in
+  let counter_pos = ref 0 in
+  let counter_neg = ref 0 in
+  let dict v = if v >= 0. then incr counter_pos else incr counter_neg in
+  List.iter
+    (fun () -> ())
+    (DT.Display2D.plot_DT mesh (fun (x, y) -> x +. y) dict);
+  let total_pts = !counter_pos + !counter_neg in
+  "plot_DT"
+  >::: [
+         ("geometry" >:: fun _ -> assert_equal 9 total_pts);
+         ("pos_count" >:: fun _ -> assert_equal 5 !counter_pos);
+         (* failure *)
+         ("neg_count" >:: fun _ -> assert_equal 4 !counter_neg) (* failure *);
+       ]
+
+(* Utils: count_occurrences / majority_label *)
+
+let suite_utils_counts () =
+  let labels = [ 1; 2; 1; 1; 3; 2; 3; 3 ] in
+  let counts = DT.Utils.count_occurrences labels in
+  let c1 = List.assoc 1 counts
+  and c2 = List.assoc 2 counts
+  and c3 = List.assoc 3 counts in
+  let majority = DT.Utils.majority_label labels in
+  let majority_tie = DT.Utils.majority_label [ 4; 5 ] in
+  let majority_empty = DT.Utils.majority_label [] in
+  "utils_counts"
+  >::: [
+         ("count_ok" >:: fun _ -> assert_equal (3, 2, 3) (c1, c2, c3));
+         ("majority" >:: fun _ -> assert_equal 1 majority);
+         (* failure*)
+         ( "majority_tie" >:: fun _ ->
+           assert_bool "tie returns one of"
+             (majority_tie = 4 || majority_tie = 5) );
+         ("majority_empty" >:: fun _ -> assert_equal 0 majority_empty);
+       ]
+
+(* Utils: entropy *)
+
+let suite_utils_entropy () =
+  let e0 = DT.Utils.entropy [ 7; 7; 7 ] in
+  let e1 = DT.Utils.entropy [ 0; 1 ] in
+  "utils_entropy"
+  >::: [
+         ("zero_entropy" >:: fun _ -> assert_bool "≈0" (feq e0 0.));
+         ("binary_entropy" >:: fun _ -> assert_bool "≈1" (feq e1 1.));
+       ]
+
+(* Utils: pl2lp / lp2pl round‑trip *)
+
+let suite_utils_pairs () =
+  let pts = [ [| 1. |]; [| 2. |]; [| 3. |] ] in
+  let lbls = [ 9; 8; 7 ] in
+  let ds = (pts, lbls) in
+  let lp = DT.Utils.pl2lp ds in
+  let ds' = DT.Utils.lp2pl lp in
+  "utils_pairs"
+  >::: [
+         ("pl2lp_len" >:: fun _ -> assert_equal 3 (List.length lp));
+         ("round_trip" >:: fun _ -> assert_equal ds ds');
+       ]
+
 let () =
   run_test_tt_main
     ("all_tests"
     >::: [ decision_tree_tests; decision_tree2d_tests; random_forest_tests ]
-         @ suites)
+         @ suites
+         @ [
+             suite_pt_list_from_mesh_x ();
+             suite_pt_list_from_mesh_y ();
+             suite_plot_DT ();
+             suite_utils_counts ();
+             suite_utils_entropy ();
+             suite_utils_pairs ();
+           ])
