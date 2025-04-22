@@ -1,3 +1,5 @@
 (library
  (name DT)
- (libraries ANSITerminal graphics))
+ (libraries ANSITerminal graphics)
+ (instrumentation
+  (backend bisect_ppx)))
