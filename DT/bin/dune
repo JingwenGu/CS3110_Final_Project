@@ -1,4 +1,4 @@
 (executable
  (public_name DT)
  (name main)
- (libraries DT))
+ (libraries DT graphics))

@@ -1,4 +1,4 @@
-# C:\Users\64247\AppData\Local\opam\cs3110-2025sp\bin\dune.exe build
+# C:\Users\64247\AppData\Local\opam\cs3110-2025sp\bin\dune.exe test
 # OCAMLPARAM: unset
 # Shared cache: enabled-except-user-rules
 # Shared cache location:
@@ -14,22 +14,8 @@
 #  ; build_dir = In_build_dir "default"
 #  ; instrument_with = []
 #  }
-$ C:\Users\64247\AppData\Local\opam\cs3110-2025sp\bin\ocamlc.opt.exe -config > C:\Users\64247\AppData\Local\Temp\dune_055d9e_output
-# Promoting "_build/default/DT.opam" to "DT.opam"
-$ (cd _build/default && C:\Users\64247\AppData\Local\opam\cs3110-2025sp\bin\ocamlc.opt.exe -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -w -49 -nopervasives -nostdlib -g -bin-annot -bin-annot-occurrences -I lib/.DT.objs/byte -no-alias-deps -opaque -o lib/.DT.objs/byte/dT.cmo -c -impl lib/dT.ml-gen)
-$ (cd _build/default && C:\Users\64247\AppData\Local\opam\cs3110-2025sp\bin\ocamldep.opt.exe -modules -impl lib/display2D.ml) > _build/default/lib/.DT.objs/dT__Display2D.impl.d
-$ (cd _build/default && C:\Users\64247\AppData\Local\opam\cs3110-2025sp\bin\ocamldep.opt.exe -modules -impl lib/decisionTree.ml) > _build/default/lib/.DT.objs/dT__DecisionTree.impl.d
-$ (cd _build/default && C:\Users\64247\AppData\Local\opam\cs3110-2025sp\bin\ocamlc.opt.exe -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -bin-annot-occurrences -I lib/.DT.objs/byte -no-alias-deps -opaque -open DT -o lib/.DT.objs/byte/dT__Display2D.cmo -c -impl lib/display2D.ml)
-$ (cd _build/default && C:\Users\64247\AppData\Local\opam\cs3110-2025sp\bin\ocamlc.opt.exe -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -bin-annot-occurrences -I test/.test_DT.eobjs/byte -no-alias-deps -opaque -o test/.test_DT.eobjs/byte/dune__exe__Test_DT.cmi -c -intf test/test_DT.mli)
-$ (cd _build/default && C:\Users\64247\AppData\Local\opam\cs3110-2025sp\bin\ocamlopt.opt.exe -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -w -49 -nopervasives -nostdlib -g -I lib/.DT.objs/byte -I lib/.DT.objs/native -intf-suffix .ml-gen -no-alias-deps -opaque -o lib/.DT.objs/native/dT.cmx -c -impl lib/dT.ml-gen)
-$ (cd _build/default && C:\Users\64247\AppData\Local\opam\cs3110-2025sp\bin\ocamlc.opt.exe -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -bin-annot-occurrences -I lib/.DT.objs/byte -no-alias-deps -opaque -open DT -o lib/.DT.objs/byte/dT__DecisionTree.cmo -c -impl lib/decisionTree.ml)
-$ (cd _build/default && C:\Users\64247\AppData\Local\opam\cs3110-2025sp\bin\ocamlc.opt.exe -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -a -o lib/DT.cma lib/.DT.objs/byte/dT.cmo lib/.DT.objs/byte/dT__Display2D.cmo lib/.DT.objs/byte/dT__DecisionTree.cmo)
-$ (cd _build/default && C:\Users\64247\AppData\Local\opam\cs3110-2025sp\bin\ocamlc.opt.exe -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -bin-annot -bin-annot-occurrences -I bin/.main.eobjs/byte -I lib/.DT.objs/byte -no-alias-deps -opaque -o bin/.main.eobjs/byte/dune__exe__Main.cmi -c -intf bin/main.mli)
-$ (cd _build/default && C:\Users\64247\AppData\Local\opam\cs3110-2025sp\bin\ocamlopt.opt.exe -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I lib/.DT.objs/byte -I lib/.DT.objs/native -intf-suffix .ml -no-alias-deps -opaque -open DT -o lib/.DT.objs/native/dT__Display2D.cmx -c -impl lib/display2D.ml)
-$ (cd _build/default && C:\Users\64247\AppData\Local\opam\cs3110-2025sp\bin\ocamlopt.opt.exe -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I test/.test_DT.eobjs/byte -I test/.test_DT.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o test/.test_DT.eobjs/native/dune__exe__Test_DT.cmx -c -impl test/test_DT.ml)
-$ (cd _build/default && C:\Users\64247\AppData\Local\opam\cs3110-2025sp\bin\ocamlopt.opt.exe -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I lib/.DT.objs/byte -I lib/.DT.objs/native -intf-suffix .ml -no-alias-deps -opaque -open DT -o lib/.DT.objs/native/dT__DecisionTree.cmx -c -impl lib/decisionTree.ml)
-$ (cd _build/default && C:\Users\64247\AppData\Local\opam\cs3110-2025sp\bin\ocamlopt.opt.exe -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I bin/.main.eobjs/byte -I bin/.main.eobjs/native -I lib/.DT.objs/byte -I lib/.DT.objs/native -intf-suffix .ml -no-alias-deps -opaque -o bin/.main.eobjs/native/dune__exe__Main.cmx -c -impl bin/main.ml)
-$ (cd _build/default && C:\Users\64247\AppData\Local\opam\cs3110-2025sp\bin\ocamlopt.opt.exe -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -a -o lib/DT.cmxa lib/.DT.objs/native/dT.cmx lib/.DT.objs/native/dT__Display2D.cmx lib/.DT.objs/native/dT__DecisionTree.cmx)
-$ (cd _build/default && C:\Users\64247\AppData\Local\opam\cs3110-2025sp\bin\ocamlopt.opt.exe -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -shared -linkall -I lib -o lib/DT.cmxs lib/DT.cmxa)
-$ (cd _build/default && C:\Users\64247\AppData\Local\opam\cs3110-2025sp\bin\ocamlopt.opt.exe -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -o test/test_DT.exe test/.test_DT.eobjs/native/dune__exe__Test_DT.cmx)
-$ (cd _build/default && C:\Users\64247\AppData\Local\opam\cs3110-2025sp\bin\ocamlopt.opt.exe -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -o bin/main.exe lib/DT.cmxa bin/.main.eobjs/native/dune__exe__Main.cmx)
+$ C:\Users\64247\AppData\Local\opam\cs3110-2025sp\bin\ocamlc.opt.exe -config > C:\Users\64247\AppData\Local\Temp\dune_8f321b_output
+$ (cd _build/default/test && .\test_DT.exe)
+> .......
+> Ran: 7 tests in: 0.00 seconds.
+> OK
