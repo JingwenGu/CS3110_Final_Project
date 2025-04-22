@@ -14,8 +14,416 @@
 #  ; build_dir = In_build_dir "default"
 #  ; instrument_with = []
 #  }
-$ C:\Users\64247\AppData\Local\opam\cs3110-2025sp\bin\ocamlc.opt.exe -config > C:\Users\64247\AppData\Local\Temp\dune_8f321b_output
+$ C:\Users\64247\AppData\Local\opam\cs3110-2025sp\bin\ocamlc.opt.exe -config > C:\Users\64247\AppData\Local\Temp\dune_42a9ee_output
+$ (cd _build/default && C:\Users\64247\AppData\Local\opam\cs3110-2025sp\bin\ocamlopt.opt.exe -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -w +a-4-7-9-27-29-30-32..42-44-45-48-50-60-66..70 -g -I test/.test_DT.eobjs/byte -I test/.test_DT.eobjs/native -I C:/Users/64247/AppData/Local/opam/cs3110-2025sp/lib/ocaml\unix -I C:\Users\64247\AppData\Local\opam\cs3110-2025sp\lib\ANSITerminal -I C:\Users\64247\AppData\Local\opam\cs3110-2025sp\lib\bytes -I C:\Users\64247\AppData\Local\opam\cs3110-2025sp\lib\graphics -I C:\Users\64247\AppData\Local\opam\cs3110-2025sp\lib\ounit2 -I C:\Users\64247\AppData\Local\opam\cs3110-2025sp\lib\ounit2\advanced -I C:\Users\64247\AppData\Local\opam\cs3110-2025sp\lib\seq -I C:\Users\64247\AppData\Local\opam\cs3110-2025sp\lib\stdlib-shims -I lib/.DT.objs/byte -I lib/.DT.objs/native -intf-suffix .ml -no-alias-deps -opaque -o test/.test_DT.eobjs/native/dune__exe__Test_DT.cmx -c -impl test/test_DT.ml)
+$ (cd _build/default && C:\Users\64247\AppData\Local\opam\cs3110-2025sp\bin\ocamlopt.opt.exe -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -w +a-4-7-9-27-29-30-32..42-44-45-48-50-60-66..70 -g -o test/test_DT.exe C:/Users/64247/AppData/Local/opam/cs3110-2025sp/lib/ocaml\unix\unix.cmxa C:\Users\64247\AppData\Local\opam\cs3110-2025sp\lib\stdlib-shims\stdlib_shims.cmxa C:\Users\64247\AppData\Local\opam\cs3110-2025sp\lib\ounit2\advanced/oUnitAdvanced.cmxa C:\Users\64247\AppData\Local\opam\cs3110-2025sp\lib\ounit2\oUnit.cmxa C:\Users\64247\AppData\Local\opam\cs3110-2025sp\lib\ANSITerminal\ANSITerminal.cmxa -I C:\Users\64247\AppData\Local\opam\cs3110-2025sp\lib\ANSITerminal C:\Users\64247\AppData\Local\opam\cs3110-2025sp\lib\graphics\graphics.cmxa -I C:\Users\64247\AppData\Local\opam\cs3110-2025sp\lib\graphics lib/DT.cmxa test/.test_DT.eobjs/native/dune__exe__Test_DT.cmx)
 $ (cd _build/default/test && .\test_DT.exe)
-> .......
-> Ran: 7 tests in: 0.00 seconds.
-> OK
+> ........FFF..............................................................................................................................F......FFFFFFFFFFFFFFFFFFFFFFFFFFFFF............F..............
+> ==============================================================================
+> Error: all_tests:181:rf_rand_202.
+>
+> File "D:\MYDATA\DESKTOP\OCaml\CS3110_Final_Project\DT\_build\default\test\oUnit-all_tests-LAPTOP-LSQIUPJI#00.log", line 739, characters 1-1:
+> Error: all_tests:181:rf_rand_202 (in the log).
+>
+> Raised at OUnitAssert.assert_failure in file "src/lib/ounit2/advanced/oUnitAssert.ml", line 45, characters 2-27
+> Called from Stdlib__List.iter2 in file "list.ml", line 155, characters 24-31
+> Called from OUnitRunner.run_one_test.(fun) in file "src/lib/ounit2/advanced/oUnitRunner.ml", line 83, characters 13-26
+>
+> not equal
+> ------------------------------------------------------------------------------
+> ==============================================================================
+> Error: all_tests:168:dt2_rand_29.
+>
+> File "D:\MYDATA\DESKTOP\OCaml\CS3110_Final_Project\DT\_build\default\test\oUnit-all_tests-LAPTOP-LSQIUPJI#00.log", line 695, characters 1-1:
+> Error: all_tests:168:dt2_rand_29 (in the log).
+>
+> Raised at OUnitAssert.assert_failure in file "src/lib/ounit2/advanced/oUnitAssert.ml", line 45, characters 2-27
+> Called from Stdlib__List.iter2 in file "list.ml", line 155, characters 24-31
+> Called from OUnitRunner.run_one_test.(fun) in file "src/lib/ounit2/advanced/oUnitRunner.ml", line 83, characters 13-26
+>
+> not equal
+> ------------------------------------------------------------------------------
+> ==============================================================================
+> Error: all_tests:167:dt2_rand_28.
+>
+> File "D:\MYDATA\DESKTOP\OCaml\CS3110_Final_Project\DT\_build\default\test\oUnit-all_tests-LAPTOP-LSQIUPJI#00.log", line 687, characters 1-1:
+> Error: all_tests:167:dt2_rand_28 (in the log).
+>
+> Raised at OUnitAssert.assert_failure in file "src/lib/ounit2/advanced/oUnitAssert.ml", line 45, characters 2-27
+> Called from Stdlib__List.iter2 in file "list.ml", line 155, characters 24-31
+> Called from OUnitRunner.run_one_test.(fun) in file "src/lib/ounit2/advanced/oUnitRunner.ml", line 83, characters 13-26
+>
+> not equal
+> ------------------------------------------------------------------------------
+> ==============================================================================
+> Error: all_tests:166:dt2_rand_27.
+>
+> File "D:\MYDATA\DESKTOP\OCaml\CS3110_Final_Project\DT\_build\default\test\oUnit-all_tests-LAPTOP-LSQIUPJI#00.log", line 679, characters 1-1:
+> Error: all_tests:166:dt2_rand_27 (in the log).
+>
+> Raised at OUnitAssert.assert_failure in file "src/lib/ounit2/advanced/oUnitAssert.ml", line 45, characters 2-27
+> Called from Stdlib__List.iter2 in file "list.ml", line 155, characters 24-31
+> Called from OUnitRunner.run_one_test.(fun) in file "src/lib/ounit2/advanced/oUnitRunner.ml", line 83, characters 13-26
+>
+> not equal
+> ------------------------------------------------------------------------------
+> ==============================================================================
+> Error: all_tests:165:dt2_rand_26.
+>
+> File "D:\MYDATA\DESKTOP\OCaml\CS3110_Final_Project\DT\_build\default\test\oUnit-all_tests-LAPTOP-LSQIUPJI#00.log", line 671, characters 1-1:
+> Error: all_tests:165:dt2_rand_26 (in the log).
+>
+> Raised at OUnitAssert.assert_failure in file "src/lib/ounit2/advanced/oUnitAssert.ml", line 45, characters 2-27
+> Called from Stdlib__List.iter2 in file "list.ml", line 155, characters 24-31
+> Called from OUnitRunner.run_one_test.(fun) in file "src/lib/ounit2/advanced/oUnitRunner.ml", line 83, characters 13-26
+>
+> not equal
+> ------------------------------------------------------------------------------
+> ==============================================================================
+> Error: all_tests:164:dt2_rand_25.
+>
+> File "D:\MYDATA\DESKTOP\OCaml\CS3110_Final_Project\DT\_build\default\test\oUnit-all_tests-LAPTOP-LSQIUPJI#00.log", line 663, characters 1-1:
+> Error: all_tests:164:dt2_rand_25 (in the log).
+>
+> Raised at OUnitAssert.assert_failure in file "src/lib/ounit2/advanced/oUnitAssert.ml", line 45, characters 2-27
+> Called from Stdlib__List.iter2 in file "list.ml", line 155, characters 24-31
+> Called from OUnitRunner.run_one_test.(fun) in file "src/lib/ounit2/advanced/oUnitRunner.ml", line 83, characters 13-26
+>
+> not equal
+> ------------------------------------------------------------------------------
+> ==============================================================================
+> Error: all_tests:163:dt2_rand_24.
+>
+> File "D:\MYDATA\DESKTOP\OCaml\CS3110_Final_Project\DT\_build\default\test\oUnit-all_tests-LAPTOP-LSQIUPJI#00.log", line 655, characters 1-1:
+> Error: all_tests:163:dt2_rand_24 (in the log).
+>
+> Raised at OUnitAssert.assert_failure in file "src/lib/ounit2/advanced/oUnitAssert.ml", line 45, characters 2-27
+> Called from Stdlib__List.iter2 in file "list.ml", line 155, characters 24-31
+> Called from OUnitRunner.run_one_test.(fun) in file "src/lib/ounit2/advanced/oUnitRunner.ml", line 83, characters 13-26
+>
+> not equal
+> ------------------------------------------------------------------------------
+> ==============================================================================
+> Error: all_tests:162:dt2_rand_23.
+>
+> File "D:\MYDATA\DESKTOP\OCaml\CS3110_Final_Project\DT\_build\default\test\oUnit-all_tests-LAPTOP-LSQIUPJI#00.log", line 647, characters 1-1:
+> Error: all_tests:162:dt2_rand_23 (in the log).
+>
+> Raised at OUnitAssert.assert_failure in file "src/lib/ounit2/advanced/oUnitAssert.ml", line 45, characters 2-27
+> Called from Stdlib__List.iter2 in file "list.ml", line 155, characters 24-31
+> Called from OUnitRunner.run_one_test.(fun) in file "src/lib/ounit2/advanced/oUnitRunner.ml", line 83, characters 13-26
+>
+> not equal
+> ------------------------------------------------------------------------------
+> ==============================================================================
+> Error: all_tests:161:dt2_rand_22.
+>
+> File "D:\MYDATA\DESKTOP\OCaml\CS3110_Final_Project\DT\_build\default\test\oUnit-all_tests-LAPTOP-LSQIUPJI#00.log", line 639, characters 1-1:
+> Error: all_tests:161:dt2_rand_22 (in the log).
+>
+> Raised at OUnitAssert.assert_failure in file "src/lib/ounit2/advanced/oUnitAssert.ml", line 45, characters 2-27
+> Called from Stdlib__List.iter2 in file "list.ml", line 155, characters 24-31
+> Called from OUnitRunner.run_one_test.(fun) in file "src/lib/ounit2/advanced/oUnitRunner.ml", line 83, characters 13-26
+>
+> not equal
+> ------------------------------------------------------------------------------
+> ==============================================================================
+> Error: all_tests:160:dt2_rand_21.
+>
+> File "D:\MYDATA\DESKTOP\OCaml\CS3110_Final_Project\DT\_build\default\test\oUnit-all_tests-LAPTOP-LSQIUPJI#00.log", line 631, characters 1-1:
+> Error: all_tests:160:dt2_rand_21 (in the log).
+>
+> Raised at OUnitAssert.assert_failure in file "src/lib/ounit2/advanced/oUnitAssert.ml", line 45, characters 2-27
+> Called from Stdlib__List.iter2 in file "list.ml", line 155, characters 24-31
+> Called from OUnitRunner.run_one_test.(fun) in file "src/lib/ounit2/advanced/oUnitRunner.ml", line 83, characters 13-26
+>
+> not equal
+> ------------------------------------------------------------------------------
+> ==============================================================================
+> Error: all_tests:159:dt2_rand_20.
+>
+> File "D:\MYDATA\DESKTOP\OCaml\CS3110_Final_Project\DT\_build\default\test\oUnit-all_tests-LAPTOP-LSQIUPJI#00.log", line 623, characters 1-1:
+> Error: all_tests:159:dt2_rand_20 (in the log).
+>
+> Raised at OUnitAssert.assert_failure in file "src/lib/ounit2/advanced/oUnitAssert.ml", line 45, characters 2-27
+> Called from Stdlib__List.iter2 in file "list.ml", line 155, characters 24-31
+> Called from OUnitRunner.run_one_test.(fun) in file "src/lib/ounit2/advanced/oUnitRunner.ml", line 83, characters 13-26
+>
+> not equal
+> ------------------------------------------------------------------------------
+> ==============================================================================
+> Error: all_tests:158:dt2_rand_19.
+>
+> File "D:\MYDATA\DESKTOP\OCaml\CS3110_Final_Project\DT\_build\default\test\oUnit-all_tests-LAPTOP-LSQIUPJI#00.log", line 615, characters 1-1:
+> Error: all_tests:158:dt2_rand_19 (in the log).
+>
+> Raised at OUnitAssert.assert_failure in file "src/lib/ounit2/advanced/oUnitAssert.ml", line 45, characters 2-27
+> Called from Stdlib__List.iter2 in file "list.ml", line 155, characters 24-31
+> Called from OUnitRunner.run_one_test.(fun) in file "src/lib/ounit2/advanced/oUnitRunner.ml", line 83, characters 13-26
+>
+> not equal
+> ------------------------------------------------------------------------------
+> ==============================================================================
+> Error: all_tests:157:dt2_rand_18.
+>
+> File "D:\MYDATA\DESKTOP\OCaml\CS3110_Final_Project\DT\_build\default\test\oUnit-all_tests-LAPTOP-LSQIUPJI#00.log", line 607, characters 1-1:
+> Error: all_tests:157:dt2_rand_18 (in the log).
+>
+> Raised at OUnitAssert.assert_failure in file "src/lib/ounit2/advanced/oUnitAssert.ml", line 45, characters 2-27
+> Called from Stdlib__List.iter2 in file "list.ml", line 155, characters 24-31
+> Called from OUnitRunner.run_one_test.(fun) in file "src/lib/ounit2/advanced/oUnitRunner.ml", line 83, characters 13-26
+>
+> not equal
+> ------------------------------------------------------------------------------
+> ==============================================================================
+> Error: all_tests:156:dt2_rand_17.
+>
+> File "D:\MYDATA\DESKTOP\OCaml\CS3110_Final_Project\DT\_build\default\test\oUnit-all_tests-LAPTOP-LSQIUPJI#00.log", line 599, characters 1-1:
+> Error: all_tests:156:dt2_rand_17 (in the log).
+>
+> Raised at OUnitAssert.assert_failure in file "src/lib/ounit2/advanced/oUnitAssert.ml", line 45, characters 2-27
+> Called from Stdlib__List.iter2 in file "list.ml", line 155, characters 24-31
+> Called from OUnitRunner.run_one_test.(fun) in file "src/lib/ounit2/advanced/oUnitRunner.ml", line 83, characters 13-26
+>
+> not equal
+> ------------------------------------------------------------------------------
+> ==============================================================================
+> Error: all_tests:155:dt2_rand_16.
+>
+> File "D:\MYDATA\DESKTOP\OCaml\CS3110_Final_Project\DT\_build\default\test\oUnit-all_tests-LAPTOP-LSQIUPJI#00.log", line 591, characters 1-1:
+> Error: all_tests:155:dt2_rand_16 (in the log).
+>
+> Raised at OUnitAssert.assert_failure in file "src/lib/ounit2/advanced/oUnitAssert.ml", line 45, characters 2-27
+> Called from Stdlib__List.iter2 in file "list.ml", line 155, characters 24-31
+> Called from OUnitRunner.run_one_test.(fun) in file "src/lib/ounit2/advanced/oUnitRunner.ml", line 83, characters 13-26
+>
+> not equal
+> ------------------------------------------------------------------------------
+> ==============================================================================
+> Error: all_tests:154:dt2_rand_15.
+>
+> File "D:\MYDATA\DESKTOP\OCaml\CS3110_Final_Project\DT\_build\default\test\oUnit-all_tests-LAPTOP-LSQIUPJI#00.log", line 583, characters 1-1:
+> Error: all_tests:154:dt2_rand_15 (in the log).
+>
+> Raised at OUnitAssert.assert_failure in file "src/lib/ounit2/advanced/oUnitAssert.ml", line 45, characters 2-27
+> Called from Stdlib__List.iter2 in file "list.ml", line 155, characters 24-31
+> Called from OUnitRunner.run_one_test.(fun) in file "src/lib/ounit2/advanced/oUnitRunner.ml", line 83, characters 13-26
+>
+> not equal
+> ------------------------------------------------------------------------------
+> ==============================================================================
+> Error: all_tests:153:dt2_rand_14.
+>
+> File "D:\MYDATA\DESKTOP\OCaml\CS3110_Final_Project\DT\_build\default\test\oUnit-all_tests-LAPTOP-LSQIUPJI#00.log", line 575, characters 1-1:
+> Error: all_tests:153:dt2_rand_14 (in the log).
+>
+> Raised at OUnitAssert.assert_failure in file "src/lib/ounit2/advanced/oUnitAssert.ml", line 45, characters 2-27
+> Called from Stdlib__List.iter2 in file "list.ml", line 155, characters 24-31
+> Called from OUnitRunner.run_one_test.(fun) in file "src/lib/ounit2/advanced/oUnitRunner.ml", line 83, characters 13-26
+>
+> not equal
+> ------------------------------------------------------------------------------
+> ==============================================================================
+> Error: all_tests:152:dt2_rand_13.
+>
+> File "D:\MYDATA\DESKTOP\OCaml\CS3110_Final_Project\DT\_build\default\test\oUnit-all_tests-LAPTOP-LSQIUPJI#00.log", line 567, characters 1-1:
+> Error: all_tests:152:dt2_rand_13 (in the log).
+>
+> Raised at OUnitAssert.assert_failure in file "src/lib/ounit2/advanced/oUnitAssert.ml", line 45, characters 2-27
+> Called from Stdlib__List.iter2 in file "list.ml", line 155, characters 24-31
+> Called from OUnitRunner.run_one_test.(fun) in file "src/lib/ounit2/advanced/oUnitRunner.ml", line 83, characters 13-26
+>
+> not equal
+> ------------------------------------------------------------------------------
+> ==============================================================================
+> Error: all_tests:151:dt2_rand_12.
+>
+> File "D:\MYDATA\DESKTOP\OCaml\CS3110_Final_Project\DT\_build\default\test\oUnit-all_tests-LAPTOP-LSQIUPJI#00.log", line 559, characters 1-1:
+> Error: all_tests:151:dt2_rand_12 (in the log).
+>
+> Raised at OUnitAssert.assert_failure in file "src/lib/ounit2/advanced/oUnitAssert.ml", line 45, characters 2-27
+> Called from Stdlib__List.iter2 in file "list.ml", line 155, characters 24-31
+> Called from OUnitRunner.run_one_test.(fun) in file "src/lib/ounit2/advanced/oUnitRunner.ml", line 83, characters 13-26
+>
+> not equal
+> ------------------------------------------------------------------------------
+> ==============================================================================
+> Error: all_tests:150:dt2_rand_11.
+>
+> File "D:\MYDATA\DESKTOP\OCaml\CS3110_Final_Project\DT\_build\default\test\oUnit-all_tests-LAPTOP-LSQIUPJI#00.log", line 551, characters 1-1:
+> Error: all_tests:150:dt2_rand_11 (in the log).
+>
+> Raised at OUnitAssert.assert_failure in file "src/lib/ounit2/advanced/oUnitAssert.ml", line 45, characters 2-27
+> Called from Stdlib__List.iter2 in file "list.ml", line 155, characters 24-31
+> Called from OUnitRunner.run_one_test.(fun) in file "src/lib/ounit2/advanced/oUnitRunner.ml", line 83, characters 13-26
+>
+> not equal
+> ------------------------------------------------------------------------------
+> ==============================================================================
+> Error: all_tests:149:dt2_rand_10.
+>
+> File "D:\MYDATA\DESKTOP\OCaml\CS3110_Final_Project\DT\_build\default\test\oUnit-all_tests-LAPTOP-LSQIUPJI#00.log", line 543, characters 1-1:
+> Error: all_tests:149:dt2_rand_10 (in the log).
+>
+> Raised at OUnitAssert.assert_failure in file "src/lib/ounit2/advanced/oUnitAssert.ml", line 45, characters 2-27
+> Called from Stdlib__List.iter2 in file "list.ml", line 155, characters 24-31
+> Called from OUnitRunner.run_one_test.(fun) in file "src/lib/ounit2/advanced/oUnitRunner.ml", line 83, characters 13-26
+>
+> not equal
+> ------------------------------------------------------------------------------
+> ==============================================================================
+> Error: all_tests:148:dt2_rand_9.
+>
+> File "D:\MYDATA\DESKTOP\OCaml\CS3110_Final_Project\DT\_build\default\test\oUnit-all_tests-LAPTOP-LSQIUPJI#00.log", line 535, characters 1-1:
+> Error: all_tests:148:dt2_rand_9 (in the log).
+>
+> Raised at OUnitAssert.assert_failure in file "src/lib/ounit2/advanced/oUnitAssert.ml", line 45, characters 2-27
+> Called from Stdlib__List.iter2 in file "list.ml", line 155, characters 24-31
+> Called from OUnitRunner.run_one_test.(fun) in file "src/lib/ounit2/advanced/oUnitRunner.ml", line 83, characters 13-26
+>
+> not equal
+> ------------------------------------------------------------------------------
+> ==============================================================================
+> Error: all_tests:147:dt2_rand_8.
+>
+> File "D:\MYDATA\DESKTOP\OCaml\CS3110_Final_Project\DT\_build\default\test\oUnit-all_tests-LAPTOP-LSQIUPJI#00.log", line 527, characters 1-1:
+> Error: all_tests:147:dt2_rand_8 (in the log).
+>
+> Raised at OUnitAssert.assert_failure in file "src/lib/ounit2/advanced/oUnitAssert.ml", line 45, characters 2-27
+> Called from Stdlib__List.iter2 in file "list.ml", line 155, characters 24-31
+> Called from OUnitRunner.run_one_test.(fun) in file "src/lib/ounit2/advanced/oUnitRunner.ml", line 83, characters 13-26
+>
+> not equal
+> ------------------------------------------------------------------------------
+> ==============================================================================
+> Error: all_tests:146:dt2_rand_7.
+>
+> File "D:\MYDATA\DESKTOP\OCaml\CS3110_Final_Project\DT\_build\default\test\oUnit-all_tests-LAPTOP-LSQIUPJI#00.log", line 519, characters 1-1:
+> Error: all_tests:146:dt2_rand_7 (in the log).
+>
+> Raised at OUnitAssert.assert_failure in file "src/lib/ounit2/advanced/oUnitAssert.ml", line 45, characters 2-27
+> Called from Stdlib__List.iter2 in file "list.ml", line 155, characters 24-31
+> Called from OUnitRunner.run_one_test.(fun) in file "src/lib/ounit2/advanced/oUnitRunner.ml", line 83, characters 13-26
+>
+> not equal
+> ------------------------------------------------------------------------------
+> ==============================================================================
+> Error: all_tests:145:dt2_rand_6.
+>
+> File "D:\MYDATA\DESKTOP\OCaml\CS3110_Final_Project\DT\_build\default\test\oUnit-all_tests-LAPTOP-LSQIUPJI#00.log", line 511, characters 1-1:
+> Error: all_tests:145:dt2_rand_6 (in the log).
+>
+> Raised at OUnitAssert.assert_failure in file "src/lib/ounit2/advanced/oUnitAssert.ml", line 45, characters 2-27
+> Called from Stdlib__List.iter2 in file "list.ml", line 155, characters 24-31
+> Called from OUnitRunner.run_one_test.(fun) in file "src/lib/ounit2/advanced/oUnitRunner.ml", line 83, characters 13-26
+>
+> not equal
+> ------------------------------------------------------------------------------
+> ==============================================================================
+> Error: all_tests:144:dt2_rand_5.
+>
+> File "D:\MYDATA\DESKTOP\OCaml\CS3110_Final_Project\DT\_build\default\test\oUnit-all_tests-LAPTOP-LSQIUPJI#00.log", line 503, characters 1-1:
+> Error: all_tests:144:dt2_rand_5 (in the log).
+>
+> Raised at OUnitAssert.assert_failure in file "src/lib/ounit2/advanced/oUnitAssert.ml", line 45, characters 2-27
+> Called from Stdlib__List.iter2 in file "list.ml", line 155, characters 24-31
+> Called from OUnitRunner.run_one_test.(fun) in file "src/lib/ounit2/advanced/oUnitRunner.ml", line 83, characters 13-26
+>
+> not equal
+> ------------------------------------------------------------------------------
+> ==============================================================================
+> Error: all_tests:143:dt2_rand_4.
+>
+> File "D:\MYDATA\DESKTOP\OCaml\CS3110_Final_Project\DT\_build\default\test\oUnit-all_tests-LAPTOP-LSQIUPJI#00.log", line 495, characters 1-1:
+> Error: all_tests:143:dt2_rand_4 (in the log).
+>
+> Raised at OUnitAssert.assert_failure in file "src/lib/ounit2/advanced/oUnitAssert.ml", line 45, characters 2-27
+> Called from Stdlib__List.iter2 in file "list.ml", line 155, characters 24-31
+> Called from OUnitRunner.run_one_test.(fun) in file "src/lib/ounit2/advanced/oUnitRunner.ml", line 83, characters 13-26
+>
+> not equal
+> ------------------------------------------------------------------------------
+> ==============================================================================
+> Error: all_tests:142:dt2_rand_3.
+>
+> File "D:\MYDATA\DESKTOP\OCaml\CS3110_Final_Project\DT\_build\default\test\oUnit-all_tests-LAPTOP-LSQIUPJI#00.log", line 487, characters 1-1:
+> Error: all_tests:142:dt2_rand_3 (in the log).
+>
+> Raised at OUnitAssert.assert_failure in file "src/lib/ounit2/advanced/oUnitAssert.ml", line 45, characters 2-27
+> Called from Stdlib__List.iter2 in file "list.ml", line 155, characters 24-31
+> Called from OUnitRunner.run_one_test.(fun) in file "src/lib/ounit2/advanced/oUnitRunner.ml", line 83, characters 13-26
+>
+> not equal
+> ------------------------------------------------------------------------------
+> ==============================================================================
+> Error: all_tests:141:dt2_rand_2.
+>
+> File "D:\MYDATA\DESKTOP\OCaml\CS3110_Final_Project\DT\_build\default\test\oUnit-all_tests-LAPTOP-LSQIUPJI#00.log", line 479, characters 1-1:
+> Error: all_tests:141:dt2_rand_2 (in the log).
+>
+> Raised at OUnitAssert.assert_failure in file "src/lib/ounit2/advanced/oUnitAssert.ml", line 45, characters 2-27
+> Called from Stdlib__List.iter2 in file "list.ml", line 155, characters 24-31
+> Called from OUnitRunner.run_one_test.(fun) in file "src/lib/ounit2/advanced/oUnitRunner.ml", line 83, characters 13-26
+>
+> not equal
+> ------------------------------------------------------------------------------
+> ==============================================================================
+> Error: all_tests:140:dt2_rand_1.
+>
+> File "D:\MYDATA\DESKTOP\OCaml\CS3110_Final_Project\DT\_build\default\test\oUnit-all_tests-LAPTOP-LSQIUPJI#00.log", line 471, characters 1-1:
+> Error: all_tests:140:dt2_rand_1 (in the log).
+>
+> Raised at OUnitAssert.assert_failure in file "src/lib/ounit2/advanced/oUnitAssert.ml", line 45, characters 2-27
+> Called from Stdlib__List.iter2 in file "list.ml", line 155, characters 24-31
+> Called from OUnitRunner.run_one_test.(fun) in file "src/lib/ounit2/advanced/oUnitRunner.ml", line 83, characters 13-26
+>
+> not equal
+> ------------------------------------------------------------------------------
+> ==============================================================================
+> Error: all_tests:133:dt2_pred.
+>
+> File "D:\MYDATA\DESKTOP\OCaml\CS3110_Final_Project\DT\_build\default\test\oUnit-all_tests-LAPTOP-LSQIUPJI#00.log", line 445, characters 1-1:
+> Error: all_tests:133:dt2_pred (in the log).
+>
+> Raised at OUnitAssert.assert_failure in file "src/lib/ounit2/advanced/oUnitAssert.ml", line 45, characters 2-27
+> Called from Stdlib__List.iter2 in file "list.ml", line 155, characters 24-31
+> Called from OUnitRunner.run_one_test.(fun) in file "src/lib/ounit2/advanced/oUnitRunner.ml", line 83, characters 13-26
+>
+> not equal
+> ------------------------------------------------------------------------------
+> ==============================================================================
+> Error: all_tests:6:dt_pred_left.
+>
+> File "D:\MYDATA\DESKTOP\OCaml\CS3110_Final_Project\DT\_build\default\test\oUnit-all_tests-LAPTOP-LSQIUPJI#00.log", line 60, characters 1-1:
+> Error: all_tests:6:dt_pred_left (in the log).
+>
+> Raised at OUnitAssert.assert_failure in file "src/lib/ounit2/advanced/oUnitAssert.ml", line 45, characters 2-27
+> Called from OUnitRunner.run_one_test.(fun) in file "src/lib/ounit2/advanced/oUnitRunner.ml", line 83, characters 13-26
+>
+> not equal
+> ------------------------------------------------------------------------------
+> ==============================================================================
+> Error: all_tests:5:dt_depth.
+>
+> File "D:\MYDATA\DESKTOP\OCaml\CS3110_Final_Project\DT\_build\default\test\oUnit-all_tests-LAPTOP-LSQIUPJI#00.log", line 53, characters 1-1:
+> Error: all_tests:5:dt_depth (in the log).
+>
+> Raised at OUnitAssert.assert_failure in file "src/lib/ounit2/advanced/oUnitAssert.ml", line 45, characters 2-27
+> Called from OUnitRunner.run_one_test.(fun) in file "src/lib/ounit2/advanced/oUnitRunner.ml", line 83, characters 13-26
+>
+> not equal
+> ------------------------------------------------------------------------------
+> ==============================================================================
+> Error: all_tests:4:dt_best.
+>
+> File "D:\MYDATA\DESKTOP\OCaml\CS3110_Final_Project\DT\_build\default\test\oUnit-all_tests-LAPTOP-LSQIUPJI#00.log", line 46, characters 1-1:
+> Error: all_tests:4:dt_best (in the log).
+>
+> Raised at OUnitAssert.assert_failure in file "src/lib/ounit2/advanced/oUnitAssert.ml", line 45, characters 2-27
+> Called from OUnitRunner.run_one_test.(fun) in file "src/lib/ounit2/advanced/oUnitRunner.ml", line 83, characters 13-26
+>
+> thr
+> ------------------------------------------------------------------------------
+> Ran: 200 tests in: 0.21 seconds.
+> FAILED: Cases: 200 Tried: 200 Errors: 0 Failures: 34 Skip:  0 Todo: 0 Timeouts: 0.
+[1]
