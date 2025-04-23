@@ -2,9 +2,9 @@
 
 ### Prerequisites
 
--OCaml
--Dune
--Git
+- OCaml
+- Dune
+- Git
 
 ### Setup
 
