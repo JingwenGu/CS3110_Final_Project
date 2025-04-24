@@ -189,11 +189,11 @@ let gen_dt_random n =
 
 let gen_dt2_basic () =
   let ds = grid 4 3 in
-  let t = DT.DecisionTree2D.build_tree ds 0 3 in
+  let t = DT.DecisionTree2D.build_tree ds 0 5 in
   [
-    (* ( "dt2_pred" >:: fun _ -> (* failure *) List.iter2 (fun p l ->
-       assert_equal ~printer:string_of_int 0 (DT.DecisionTree2D.predict t p))
-       (fst ds) (snd ds) ); *)
+    ( "dt2_pred" >:: fun _ -> List.iter2 (fun p l ->
+       assert_equal ~printer:string_of_int l (DT.DecisionTree2D.predict t p))
+       (fst ds) (snd ds) );
     ( "dt2_split_x" >:: fun _ ->
       let l, r = DT.DecisionTree2D.split_dataset ds DT.DecisionTree2D.X 1.5 in
       assert_equal
@@ -202,7 +202,7 @@ let gen_dt2_basic () =
     ( "dt2_split_y" >:: fun _ ->
       let l, _ = DT.DecisionTree2D.split_dataset ds DT.DecisionTree2D.Y (-1.) in
       assert_equal 0 (List.length (fst l)) );
-    ("dt2_depth" >:: fun _ -> assert_equal 3 (dep2 t));
+    ("dt2_depth" >:: fun _ -> assert_equal ~printer:string_of_int 5 (dep2 t));
   ]
 
 let gen_dt2_edge () =
@@ -219,11 +219,11 @@ let gen_dt2_edge () =
       | _ -> assert_failure "nl" );
   ]
 
-(* let gen_dt2_random m = List.init m (fun k -> let w = k + 3 in let h = k + 2
-   in "dt2_rand_" ^ string_of_int k >:: fun _ -> (* failure in all cases *) let
-   ds = grid w h in let t = DT.DecisionTree2D.build_tree ds 0 4 in List.iter2
-   (fun p l -> assert_equal l (DT.DecisionTree2D.predict t p)) (fst ds) (snd
-   ds)) *)
+let gen_dt2_random m = List.init m (fun k -> let w = k + 3 in let h = k + 2
+   in "dt2_rand_" ^ string_of_int k >:: fun _ -> let
+   ds = grid w h in let t = DT.DecisionTree2D.build_tree ds 0 100 in List.iter2
+   (fun p l -> assert_equal ~printer:string_of_int l (DT.DecisionTree2D.predict t p)) (fst ds) (snd
+   ds))
 
 let gen_rf_basic () =
   Random.init 81;
@@ -330,7 +330,7 @@ let suites =
       gen_dt_random 120;
       gen_dt2_basic ();
       gen_dt2_edge ();
-      (* gen_dt2_random 30; *)
+      gen_dt2_random 30;
       gen_rf_basic ();
       gen_rf_ratio_size_tests ();
       gen_rf_tie ();
