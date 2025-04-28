@@ -115,6 +115,12 @@ let rec wait_for_space_or_q () =
   if status.key = ' ' || status.key = 'q' then status.key
   else wait_for_space_or_q ()
 
+let rec wait_for_key_of keys =
+  let ev = wait_next_event [Key_pressed] in
+  if List.mem ev.key keys then ev.key else wait_for_key_of keys
+let wait_for_mode () = wait_for_key_of ['i'; 'd']
+let wait_for_algo () = wait_for_key_of ['d'; 'a'; 'r'; 'q']
+
 let draw_center_instructions text =
   let rect_width = window_width / 2 in
   let rect_height = 100 in
@@ -178,6 +184,84 @@ set_color white;
 moveto (sx + 10) (sy + 10);
 draw_string (sprintf "Label: %d" label)
 
+let interactive_mode () =
+  (** storage for points + labels, and current class *)
+  let pts = ref [] in
+  let labs = ref [] in
+  let current_class = ref 0 in
+
+  (** choose algorithm *)
+  clear_graph ();
+  draw_center_instructions
+    "Interactive: d=DecisionTree, a=AdaBoost, r=RandomForest, q=quit";
+  let algo = wait_for_algo () in
+  if algo = 'q' then () else
+
+  (** train_fn returns a function world->label *)
+  let train_fn () =
+    match algo with
+    | 'd' ->
+      let data = List.map (fun (x,y) -> [|x;y|]) !pts in
+      let tree = DT.DecisionTree.build_tree (data, !labs) 0 5 in
+      fun (x,y) -> DT.DecisionTree.predict tree [|x;y|]
+    | 'a' ->
+      let data = List.map (fun (x,y) -> [|x;y|]) !pts in
+      let ys_ = DT.AdaBoost.adaboost_convert_labels !labs in
+      let ens = DT.AdaBoost.adaboost_train_ada (data, ys_) 20 in
+      fun (x,y) ->
+        let p = DT.AdaBoost.adaboost_predict_ada ens [|x;y|] in
+        DT.AdaBoost.adaboost_convert_prediction p
+    | 'r' ->
+      let data = List.map (fun (x,y) -> [|x;y|]) !pts in
+      let forest =
+        DT.RandomForest.train_forest
+          (data, !labs) (DT.RandomForest.Ratio 0.6) 20 5
+      in
+      fun (x,y) -> DT.RandomForest.predict_forest forest [|x;y|]
+    | _ -> fun _ -> 0
+  in
+
+  (** current predictor *)
+  let predict = ref (fun _ -> 0) in
+
+  (** main loop *)
+  let rec loop () =
+    clear_graph ();
+
+    (** redraw boundary *)
+    draw_decision_boundary
+      world_x_min world_y_min world_width world_height
+      (fun pt -> !predict pt);
+
+    (** redraw all points *)
+    List.iter2
+      (fun (x,y) l -> draw_marker (x,y) l world_to_screen)
+      !pts !labs;
+
+    (** instructions *)
+    draw_center_instructions
+      (Printf.sprintf
+         "Class=%d (press 'c' to toggle) click mouse to add press 'q' toquit"
+         !current_class);
+
+    let ev = wait_next_event [Button_down;Key_pressed] in
+    if ev.key = 'q' then ()
+    else if ev.key = 'c' then begin
+      current_class := 1 - !current_class;
+      loop ()
+    end else if ev.button then begin
+      (** add new point *)
+      let x = world_x_min +. float ev.mouse_x *. world_width /. float window_width in
+      let y = world_y_min +. float ev.mouse_y *. world_height /. float window_height in
+      pts := (x,y) :: !pts;
+      labs := !current_class :: !labs;
+      predict := train_fn ();
+      loop ()
+    end else
+      loop ()
+  in
+  loop ()
+
 (** Main Program *)
 let () =
   Random.self_init ();
@@ -185,15 +269,24 @@ let () =
   (** Open Graphics window *)
   open_graph (sprintf " %dx%d" window_width window_height);
 
+  (** mode selection *)
+  draw_center_instructions "Press 'i' for interactive mode or 'd' for display";
+  let mode = wait_for_mode () in
+  if mode = 'i' then (interactive_mode (); close_graph (); exit 0)
+  else if mode = 'd' then ()
+  else (close_graph (); exit 0);
+
+  open_graph (sprintf " %dx%d" window_width window_height);
+
   (** Decision Tree (2D version) *)
   set_window_title "Decision Tree2D - Graphics Interface";
 
   let dataset = [
-    (1.0, 1.0); (2.0, 1.5); (1.5, 2.0);   (* bottom-left quadrant → class 0 *)
-    (1.0, 9.0); (2.0, 8.5); (1.5, 7.5);   (* top-left quadrant    → class 1 *)
-    (8.0, 1.0); (9.0, 1.5); (7.5, 2.0);   (* bottom-right         → class 1 *)
-    (8.0, 9.0); (9.0, 8.0); (7.5, 7.5);   (* top-right            → class 0 *)
-    (5.0, 5.0); (5.5, 5.5); (4.5, 4.5)    (* center cluster       → class 0 *)
+    (1.0, 1.0); (2.0, 1.5); (1.5, 2.0);   (** bottom-left quadrant → class 0 *)
+    (1.0, 9.0); (2.0, 8.5); (1.5, 7.5);   (** top-left quadrant    → class 1 *)
+    (8.0, 1.0); (9.0, 1.5); (7.5, 2.0);   (** bottom-right         → class 1 *)
+    (8.0, 9.0); (9.0, 8.0); (7.5, 7.5);   (** top-right            → class 0 *)
+    (5.0, 5.0); (5.5, 5.5); (4.5, 4.5)    (** center cluster       → class 0 *)
   ] in
   let labels = [0; 0; 0; 1; 1; 1; 1; 1; 1; 0; 0; 0; 0; 0; 0] in
 
