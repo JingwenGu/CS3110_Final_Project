@@ -42,13 +42,13 @@ module Data = struct
 
   (* Convert dataset, handling missing values:
      - Numeric columns: fill missing with mean
-     - Categorical: fill missing with majority value, then map to random int codes *)
+     - Categorical: fill missing with majority, then map to random int codes *)
   let convert_dataset (ds : dataset)
     : bool array * (string, int) Hashtbl.t array * (string * float array) list =
-    Random.self_init ();
+    Random.self_init ();  
     let m = Array.length ds.features in
 
-    (* 1) Detect numeric columns (ignore missing="") *)
+    (* Detect numeric vs categorical (ignore missing="") *)
     let is_numeric = Array.make m true in
     List.iter
       (fun { values; _ } ->
@@ -61,7 +61,7 @@ module Data = struct
           values)
       ds.rows;
 
-    (* 2) Compute defaults: mean for numeric, majority for categorical *)
+    (* Compute column sums/counts and category frequencies *)
     let sum        = Array.make m 0.0 in
     let cnt        = Array.make m 0   in
     let cat_counts = Array.init m (fun _ -> Hashtbl.create 16) in
@@ -96,7 +96,7 @@ module Data = struct
         default_cat.(j) <- maj)
     done;
 
-    (* 3) Build maps and convert rows to numeric arrays *)
+    (* Assign codes and convert rows *)
     let maps = Array.init m (fun _ -> Hashtbl.create 16) in
     let data =
       List.map
@@ -110,25 +110,56 @@ module Data = struct
                 else
                   let vstr = if v = "" then default_cat.(j) else v in
                   let tbl = maps.(j) in
-                  let code =
-                    match Hashtbl.find_opt tbl vstr with
-                    | Some c -> c
-                    | None ->
-                      let rec fresh () =
-                        let c0 = Random.int 1_000_000 in
-                        if Hashtbl.fold (fun _ c seen -> seen || c = c0) tbl false
-                        then fresh ()
-                        else c0
-                      in
-                      let c1 = fresh () in
-                      Hashtbl.add tbl vstr c1;
-                      c1
-                  in
-                  float_of_int code)
+                  match Hashtbl.find_opt tbl vstr with
+                  | Some c -> float_of_int c
+                  | None ->
+                    let rec fresh () =
+                      let c0 = Random.int 1_000_000 in
+                      if Hashtbl.fold (fun _ c seen -> seen || c = c0) tbl false
+                      then fresh ()
+                      else c0
+                    in
+                    let c1 = fresh () in
+                    Hashtbl.add tbl vstr c1;
+                    float_of_int c1)
               values
           in
           (id, arr))
         ds.rows
     in
     (is_numeric, maps, data)
+
+  (* For decision tree input formats *)
+  type tree_input =
+    | Train of float array list * int list
+    | Test of float array list
+
+  (** Convert raw data to either Train (features * labels) or Test features list.
+      [label_column] is the index of the label within each feature array,
+      or [-1] for a test set (no labels).
+  *)
+  let prepare_for_tree ~label_column data =
+    if label_column < 0 then
+      Test (List.map snd data)
+    else if label_column >= 0 then
+      let xs, ys =
+        List.fold_right
+          (fun (_id, arr) (acc_x, acc_y) ->
+            let label =
+              try int_of_float arr.(label_column)
+              with _ ->
+                failwith
+                  (Printf.sprintf "Label not integer at column %d" label_column)
+            in
+            let feats =
+              Array.init (Array.length arr - 1) (fun i ->
+                if i < label_column then arr.(i) else arr.(i + 1))
+            in
+            (feats :: acc_x, label :: acc_y))
+          data
+          ([], [])
+      in
+      Train (xs, ys)
+    else
+      failwith "Invalid label_column"
 end
