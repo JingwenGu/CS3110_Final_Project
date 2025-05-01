@@ -191,9 +191,11 @@ let gen_dt2_basic () =
   let ds = grid 4 3 in
   let t = DT.DecisionTree2D.build_tree ds 0 5 in
   [
-    ( "dt2_pred" >:: fun _ -> List.iter2 (fun p l ->
-       assert_equal ~printer:string_of_int l (DT.DecisionTree2D.predict t p))
-       (fst ds) (snd ds) );
+    ( "dt2_pred" >:: fun _ ->
+      List.iter2
+        (fun p l ->
+          assert_equal ~printer:string_of_int l (DT.DecisionTree2D.predict t p))
+        (fst ds) (snd ds) );
     ( "dt2_split_x" >:: fun _ ->
       let l, r = DT.DecisionTree2D.split_dataset ds DT.DecisionTree2D.X 1.5 in
       assert_equal
@@ -219,11 +221,17 @@ let gen_dt2_edge () =
       | _ -> assert_failure "nl" );
   ]
 
-let gen_dt2_random m = List.init m (fun k -> let w = k + 3 in let h = k + 2
-   in "dt2_rand_" ^ string_of_int k >:: fun _ -> let
-   ds = grid w h in let t = DT.DecisionTree2D.build_tree ds 0 100 in List.iter2
-   (fun p l -> assert_equal ~printer:string_of_int l (DT.DecisionTree2D.predict t p)) (fst ds) (snd
-   ds))
+let gen_dt2_random m =
+  List.init m (fun k ->
+      let w = k + 3 in
+      let h = k + 2 in
+      "dt2_rand_" ^ string_of_int k >:: fun _ ->
+      let ds = grid w h in
+      let t = DT.DecisionTree2D.build_tree ds 0 100 in
+      List.iter2
+        (fun p l ->
+          assert_equal ~printer:string_of_int l (DT.DecisionTree2D.predict t p))
+        (fst ds) (snd ds))
 
 let gen_rf_basic () =
   Random.init 81;
@@ -477,66 +485,69 @@ let suite_utils_pairs () =
        ]
 
 (** helper for floating‐point comparisons *)
-let assert_float_equal ?(eps=1e-6) expected actual =
+let assert_float_equal ?(eps = 1e-6) expected actual =
   assert_bool
     (Printf.sprintf "Expected %f but got %f" expected actual)
     (abs_float (expected -. actual) <= eps)
 
 (** safe_thresholds *)
-let test_safe_thresholds_empty _ =
-  assert_equal [] (safe_thresholds [])
+let test_safe_thresholds_empty _ = assert_equal [] (safe_thresholds [])
 
 let test_safe_thresholds_single _ =
-  assert_equal [1.0] (safe_thresholds [1.0])
+  assert_equal [ 1.0 ] (safe_thresholds [ 1.0 ])
 
 let test_safe_thresholds_multi _ =
-  let values = [1.0; 3.0; 5.0] in
+  let values = [ 1.0; 3.0; 5.0 ] in
   let mids = safe_thresholds values |> List.sort compare in
-  assert_equal [2.0; 4.0] mids
+  assert_equal [ 2.0; 4.0 ] mids
 
 (** stump prediction *)
 let stump0 = { stump_axis = 0; stump_thresh = 0.5; stump_polarity = 1 }
-let test_predict_stump _ =
-  (** points ≤ 0.5 → +1, > 0.5 → -1 *)
-  assert_equal 1 (adaboost_predict_stump stump0 [|0.0|]);
-  assert_equal (-1) (adaboost_predict_stump stump0 [|1.0|])
 
+let test_predict_stump _ =
+  (* points ≤ 0.5 → +1, > 0.5 → -1 *)
+  assert_equal 1 (adaboost_predict_stump stump0 [| 0.0 |]);
+  assert_equal (-1) (adaboost_predict_stump stump0 [| 1.0 |])
 
 (** train a single stump on a simple dataset *)
 let test_train_stump_simple _ =
-  let xs = [[|0.|]; [|1.|]] in
-  let ys = [-1; 1] in
+  let xs = [ [| 0. |]; [| 1. |] ] in
+  let ys = [ -1; 1 ] in
   let weights = [| 0.5; 0.5 |] in
   let stump = adaboost_train_stump (xs, ys) weights in
-  (** Check axis is correct *)
+  (* Check axis is correct *)
   assert_equal 0 stump.stump_axis;
-  (** Check threshold is between 0 and 1 *)
-  assert_bool "threshold between 0 and 1" 
+  (* Check threshold is between 0 and 1 *)
+  assert_bool "threshold between 0 and 1"
     (stump.stump_thresh > 0.0 && stump.stump_thresh < 1.0);
-  (** check for correct point classification *)
+  (* check for correct point classification *)
   assert_equal (-1) (adaboost_predict_stump stump (List.nth xs 0));
   assert_equal 1 (adaboost_predict_stump stump (List.nth xs 1))
 
 (** AdaBoost training and prediction on simple dataset *)
 let test_train_predict_ada _ =
-  let xs = [[|0.|]; [|1.|]; [|2.|]; [|3.|]] in
-  let ys01 = [0; 0; 1; 1] in
-  let ys = adaboost_convert_labels ys01 in  (* [-1; -1; 1; 1] *)
+  let xs = [ [| 0. |]; [| 1. |]; [| 2. |]; [| 3. |] ] in
+  let ys01 = [ 0; 0; 1; 1 ] in
+  let ys = adaboost_convert_labels ys01 in
+  (* [-1; -1; 1; 1] *)
   let ensemble = adaboost_train_ada (xs, ys) 2 in
-  (** should have 2 stumps *)
+  (* should have 2 stumps *)
   assert_equal 2 (List.length ensemble);
-  (** Each alpha should be positive for positive stumps *)
-  List.iter (fun (_, alpha) -> assert_bool "alpha positive" (alpha > 0.)) ensemble;
-  (** Preds should match original labels *)
-  List.iteri (fun i x ->
-    let pred = adaboost_predict_ada ensemble x in
-    let expected = List.nth ys i in
-    assert_equal ~printer:string_of_int expected pred
-  ) xs
+  (* Each alpha should be positive for positive stumps *)
+  List.iter
+    (fun (_, alpha) -> assert_bool "alpha positive" (alpha > 0.))
+    ensemble;
+  (* Preds should match original labels *)
+  List.iteri
+    (fun i x ->
+      let pred = adaboost_predict_ada ensemble x in
+      let expected = List.nth ys i in
+      assert_equal ~printer:string_of_int expected pred)
+    xs
 
 (** label conversion *)
 let test_convert_labels _ =
-  assert_equal [-1; 1; 1; -1] (adaboost_convert_labels [0; 1; 1; 0])
+  assert_equal [ -1; 1; 1; -1 ] (adaboost_convert_labels [ 0; 1; 1; 0 ])
 
 let test_convert_prediction _ =
   assert_equal 0 (adaboost_convert_prediction (-1));
@@ -544,39 +555,155 @@ let test_convert_prediction _ =
 
 (** test with a dataset that can't be perfectly split *)
 let test_adaboost_with_noise _ =
-  (** Dataset with one outlier: [0,0,1,1] but flip one label *)
-  let xs = [[|0.|]; [|1.|]; [|2.|]; [|3.|]] in
-  let ys01 = [1; 0; 1; 1] in (* Noisy dataset - should be [0,0,1,1] *)
+  (* Dataset with one outlier: [0,0,1,1] but flip one label *)
+  let xs = [ [| 0. |]; [| 1. |]; [| 2. |]; [| 3. |] ] in
+  let ys01 = [ 1; 0; 1; 1 ] in
+  (* Noisy dataset - should be [0,0,1,1] *)
   let ys = adaboost_convert_labels ys01 in
   let ensemble = adaboost_train_ada (xs, ys) 3 in
   assert_bool "ensemble not empty" (List.length ensemble > 0);
   let correct = ref 0 in
-  List.iteri (fun i x ->
-    let pred = adaboost_predict_ada ensemble x in
-    if pred = List.nth ys i then incr correct
-  ) xs;
-  (** Should get at least 3/4 correct with this simple dataset *)
+  List.iteri
+    (fun i x ->
+      let pred = adaboost_predict_ada ensemble x in
+      if pred = List.nth ys i then incr correct)
+    xs;
+  (* Should get at least 3/4 correct with this simple dataset *)
   assert_bool "75% accuracy" (!correct >= 3)
 
 let suite_AdaBoost =
-  "AdaBoost Tests" >::: [
-    "safe_empty"    >:: test_safe_thresholds_empty;
-    "safe_single"   >:: test_safe_thresholds_single;
-    "safe_multi"    >:: test_safe_thresholds_multi;
-    "pred_stump"    >:: test_predict_stump;
-    "train_stump"   >:: test_train_stump_simple;
-    "train_predict" >:: test_train_predict_ada;
-    "convert_lbl"   >:: test_convert_labels;
-    "convert_pred"  >:: test_convert_prediction;
-    "noise_handle"  >:: test_adaboost_with_noise;
+  "AdaBoost Tests"
+  >::: [
+         "safe_empty" >:: test_safe_thresholds_empty;
+         "safe_single" >:: test_safe_thresholds_single;
+         "safe_multi" >:: test_safe_thresholds_multi;
+         "pred_stump" >:: test_predict_stump;
+         "train_stump" >:: test_train_stump_simple;
+         "train_predict" >:: test_train_predict_ada;
+         "convert_lbl" >:: test_convert_labels;
+         "convert_pred" >:: test_convert_prediction;
+         "noise_handle" >:: test_adaboost_with_noise;
+       ]
+
+let test_pt_list_from_mesh_x _ =
+  let mesh =
+    {
+      x_min = 0.0;
+      y_min = 0.0;
+      x_max = 1.0;
+      y_max = 1.0;
+      x_unit = 0.5;
+      y_unit = 0.5;
+    }
+  in
+  let result = pt_list_from_mesh_x (0.0, 1.0) mesh in
+  let expected = [ (0.0, 1.0); (0.5, 1.0); (1.0, 1.0) ] in
+  assert_equal expected result ~printer:(fun lst ->
+      "["
+      ^ String.concat "; "
+          (List.map (fun (x, y) -> Printf.sprintf "(%.1f,%.1f)" x y) lst)
+      ^ "]")
+
+let test_pt_list_from_mesh_y _ =
+  let mesh =
+    {
+      x_min = 0.0;
+      y_min = 0.0;
+      x_max = 1.0;
+      y_max = 1.0;
+      x_unit = 0.5;
+      y_unit = 0.5;
+    }
+  in
+  let result = pt_list_from_mesh_y (0.0, 1.0) mesh in
+  let expected =
+    [
+      [ (0.0, 1.0); (0.5, 1.0); (1.0, 1.0) ];
+      [ (0.0, 0.5); (0.5, 0.5); (1.0, 0.5) ];
+      [ (0.0, 0.0); (0.5, 0.0); (1.0, 0.0) ];
+    ]
+  in
+  assert_equal expected result ~printer:(fun lst2d ->
+      "["
+      ^ String.concat "; "
+          (List.map
+             (fun row ->
+               "["
+               ^ String.concat "; "
+                   (List.map
+                      (fun (x, y) -> Printf.sprintf "(%.1f,%.1f)" x y)
+                      row)
+               ^ "]")
+             lst2d)
+      ^ "]")
+
+let test_pt_list_from_mesh _ =
+  let mesh =
+    {
+      x_min = 0.0;
+      y_min = 0.0;
+      x_max = 1.0;
+      y_max = 1.0;
+      x_unit = 0.5;
+      y_unit = 0.5;
+    }
+  in
+  let expected = pt_list_from_mesh_y (0.0, 1.0) mesh in
+  let result = pt_list_from_mesh mesh in
+  assert_equal expected result
+
+let test_f_demo _ =
+  let input = (2.0, 5.0) in
+  let expected = 5.0 -. (2.0 *. 2.0) in
+  let result = f_demo input in
+  assert_equal expected result ~printer:string_of_float ~cmp:(fun a b ->
+      abs_float (a -. b) < 1e-6)
+
+let test_f_demo1 _ =
+  let input = (3.0, 1.0) in
+  let expected = (((3.0 *. 3.0) +. (1.0 *. 1.0)) /. (3.0 +. 1.0)) -. 4.0 in
+  let result = f_demo1 input in
+  assert_equal expected result ~printer:string_of_float ~cmp:(fun a b ->
+      abs_float (a -. b) < 1e-6)
+
+let test_dict_demo_positive _ =
+  assert_bool "dict_demo should not raise for positive input"
+    (try
+       dict_demo 1.0;
+       true
+     with _ -> false)
+
+let test_dict_demo_zero _ =
+  assert_bool "dict_demo should not raise for zero input"
+    (try
+       dict_demo 0.0;
+       true
+     with _ -> false)
+
+let test_dict_demo_negative _ =
+  assert_bool "dict_demo should not raise for negative input"
+    (try
+       dict_demo (-1.0);
+       true
+     with _ -> false)
+
+let extre2DteTest =
+  [
+    "test pt_list_from_mesh_x" >:: test_pt_list_from_mesh_x;
+    "test pt_list_from_mesh_y" >:: test_pt_list_from_mesh_y;
+    "test pt_list_from_mesh" >:: test_pt_list_from_mesh;
+    "test" >:: test_f_demo;
+    "test" >:: test_f_demo1;
+    "test" >:: test_dict_demo_positive;
+    "test" >:: test_dict_demo_zero;
+    "test" >:: test_dict_demo_negative;
   ]
-  
 
 let () =
   run_test_tt_main
     ("all_tests"
     >::: [ decision_tree_tests; decision_tree2d_tests; random_forest_tests ]
-         @ suites
+         @ suites @ extre2DteTest
          @ [
              suite_pt_list_from_mesh_x ();
              suite_pt_list_from_mesh_y ();
@@ -584,5 +711,5 @@ let () =
              suite_utils_counts ();
              suite_utils_entropy ();
              suite_utils_pairs ();
-             suite_AdaBoost;  
+             suite_AdaBoost;
            ])
