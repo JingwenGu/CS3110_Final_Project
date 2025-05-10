@@ -29,9 +29,9 @@ module Data = struct
            if Array.length fields <> Array.length header then
              failwith
                (Printf.sprintf
-                  "Bad row: expected %d fields but got %d"
+                  "Bad row: expected %d fields but got %d in %s"
                   (Array.length header)
-                  (Array.length fields));
+                  (Array.length fields) line);
            let id = fields.(0) in
            let values = Array.sub fields 1 (Array.length fields - 1) in
            rows := { id; values } :: !rows
@@ -133,33 +133,32 @@ module Data = struct
   type tree_input =
     | Train of float array list * int list
     | Test of float array list
+  
+  let prepare_test_for_tree data = match data with
+    | Test features -> List.map (fun x -> x) features
+    | Train _ -> failwith "Should be test dataset instead of train dataset"
 
   (** Convert raw data to either Train (features * labels) or Test features list.
       [label_column] is the index of the label within each feature array,
       or [-1] for a test set (no labels).
   *)
-  let prepare_for_tree ~label_column data =
-    if label_column < 0 then
-      Test (List.map snd data)
-    else if label_column >= 0 then
-      let xs, ys =
-        List.fold_right
-          (fun (_id, arr) (acc_x, acc_y) ->
-            let label =
-              try int_of_float arr.(label_column)
-              with _ ->
-                failwith
-                  (Printf.sprintf "Label not integer at column %d" label_column)
-            in
-            let feats =
-              Array.init (Array.length arr - 1) (fun i ->
-                if i < label_column then arr.(i) else arr.(i + 1))
-            in
-            (feats :: acc_x, label :: acc_y))
-          data
-          ([], [])
-      in
-      Train (xs, ys)
-    else
-      failwith "Invalid label_column"
+  let prepare_for_tree label_column data =
+    let xs, ys =
+      List.fold_right
+        (fun (_id, arr) (acc_x, acc_y) ->
+          let label =
+            try int_of_float arr.(label_column)
+            with _ ->
+              failwith
+                (Printf.sprintf "Label not integer at column %d" label_column)
+          in
+          let feats =
+            Array.init (Array.length arr - 1) (fun i ->
+              if i < label_column then arr.(i) else arr.(i + 1))
+          in
+          (feats :: acc_x, label :: acc_y))
+        data
+        ([], [])
+    in
+    Train (xs, ys)
 end

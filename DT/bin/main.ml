@@ -17,6 +17,197 @@ let t = DT.DecisionTree2D.build_tree ds 0 10
 
 let predicted = List.iter2 (fun p l ->(print_endline ((string_of_float (fst p)) ^ "," ^ (string_of_float (snd p)) ^ "->" ^ (string_of_int l) ^ ":" ^ (string_of_int (DT.DecisionTree2D.predict t p))))) (fst ds) (snd ds)
 
+type row = {
+  id     : string;
+  values : string array;
+}
+
+type dataset = {
+  features : string array;
+  rows      : row list;
+}
+
+(* Simple comma-split; for production use ocaml-csv *)
+let split_line (line : string) : string array =
+  String.split_on_char ',' line |> Array.of_list
+
+(* Read CSV: first col is ID, first row is header *)
+let read_csv (filename : string) : dataset =
+  let ic = open_in filename in
+  let header = input_line ic |> split_line in
+  if Array.length header < 2 then
+    failwith "CSV must have at least an ID column and one feature column";
+  let features = Array.sub header 1 (Array.length header - 1) in
+  let rows = ref [] in
+  (try
+      while true do
+        let line = input_line ic in
+        if String.trim line <> "" then
+          let fields = split_line line in
+          if Array.length fields <> Array.length header then
+            failwith
+              (Printf.sprintf
+                "Bad row: expected %d fields but got %d in %s"
+                (Array.length header)
+                (Array.length fields) line);
+          let id = fields.(0) in
+          let values = Array.sub fields 1 (Array.length fields - 1) in
+          rows := { id; values } :: !rows
+      done
+    with End_of_file -> ());
+  close_in ic;
+  { features; rows = List.rev !rows }
+
+(* Convert dataset, handling missing values:
+    - Numeric columns: fill missing with mean
+    - Categorical: fill missing with majority, then map to random int codes *)
+let convert_dataset (ds : dataset)
+  : bool array * (string, int) Hashtbl.t array * (string * float array) list =
+  Random.self_init ();  
+  let m = Array.length ds.features in
+
+  (* Detect numeric vs categorical (ignore missing="") *)
+  let is_numeric = Array.make m true in
+  List.iter
+    (fun { values; _ } ->
+      Array.iteri
+        (fun j v ->
+          if v <> "" && is_numeric.(j) then
+            match (try Some (float_of_string v) with _ -> None) with
+            | Some _ -> ()
+            | None -> is_numeric.(j) <- false)
+        values)
+    ds.rows;
+
+  (* Compute column sums/counts and category frequencies *)
+  let sum        = Array.make m 0.0 in
+  let cnt        = Array.make m 0   in
+  let cat_counts = Array.init m (fun _ -> Hashtbl.create 16) in
+  List.iter
+    (fun { values; _ } ->
+      Array.iteri
+        (fun j v ->
+          if v = "" then ()
+          else if is_numeric.(j) then (
+            let f = float_of_string v in
+            sum.(j) <- sum.(j) +. f;
+            cnt.(j) <- cnt.(j) + 1)
+          else (
+            let tbl = cat_counts.(j) in
+            Hashtbl.replace tbl v (1 + (try Hashtbl.find tbl v with Not_found -> 0))))
+        values)
+    ds.rows;
+  let default_num = Array.make m 0.0 in
+  let default_cat = Array.make m "" in
+  for j = 0 to m - 1 do
+    if is_numeric.(j) then
+      default_num.(j) <-
+        if cnt.(j) > 0 then sum.(j) /. float_of_int cnt.(j) else 0.0
+    else (
+      let tbl = cat_counts.(j) in
+      let maj, _ =
+        Hashtbl.fold
+          (fun k v (acc_k, acc_v) -> if v > acc_v then (k, v) else (acc_k, acc_v))
+          tbl
+          ("", -1)
+      in
+      default_cat.(j) <- maj)
+  done;
+
+  (* Assign codes and convert rows *)
+  let maps = Array.init m (fun _ -> Hashtbl.create 16) in
+  let data =
+    List.map
+      (fun { id; values } ->
+        let arr =
+          Array.mapi
+            (fun j v ->
+              if is_numeric.(j) then
+                if v = "" then default_num.(j)
+                else float_of_string v
+              else
+                let vstr = if v = "" then default_cat.(j) else v in
+                let tbl = maps.(j) in
+                match Hashtbl.find_opt tbl vstr with
+                | Some c -> float_of_int c
+                | None ->
+                  let rec fresh () =
+                    let c0 = Random.int 1_000_000 in
+                    if Hashtbl.fold (fun _ c seen -> seen || c = c0) tbl false
+                    then fresh ()
+                    else c0
+                  in
+                  let c1 = fresh () in
+                  Hashtbl.add tbl vstr c1;
+                  float_of_int c1)
+            values
+        in
+        (id, arr))
+      ds.rows
+  in
+  (is_numeric, maps, data)
+
+(* For decision tree input formats *)
+type tree_input =
+  | Train of float array list * int list
+  | Test of float array list
+
+let prepare_test_for_tree data = match data with
+  | Test features -> List.map (fun x -> x) features
+  | Train _ -> failwith "Should be test dataset instead of train dataset"
+
+(** Convert raw data to either Train (features * labels) or Test features list.
+    [label_column] is the index of the label within each feature array,
+    or [-1] for a test set (no labels).
+*)
+let prepare_for_tree label_column data =
+  let xs, ys =
+    List.fold_right
+      (fun (_id, arr) (acc_x, acc_y) ->
+        let label =
+          try int_of_float arr.(label_column)
+          with _ ->
+            failwith
+              (Printf.sprintf "Label not integer at column %d" label_column)
+        in
+        let feats =
+          Array.init (Array.length arr - 1) (fun i ->
+            if i < label_column then arr.(i) else arr.(i + 1))
+        in
+        (feats :: acc_x, label :: acc_y))
+      data
+      ([], [])
+  in
+  Train (xs, ys)
+
+
+let kaggle_test _ = 
+  let train_data = read_csv "data/train.csv" in
+  let (b,h,l) = convert_dataset train_data in
+  let tree_input = prepare_for_tree 0 l in 
+  let forest = match tree_input with
+    | Train (features,labels) -> DT.RandomForest.train_forest (features,labels) (DT.RandomForest.Ratio 0.6) 100 50
+    | Test test -> failwith "Should be a train dataset instead of a test dataset"
+  in
+  let test_data = read_csv "data/test.csv" in
+  let (b',h',l') = convert_dataset test_data in
+
+  let preds = List.map (fun point -> DT.RandomForest.predict_forest forest (snd point)) l' in
+
+  let _ = List.map (fun x -> print_endline (string_of_int x)) preds in
+
+  let write_list_to_csv ~filename xs =
+    let oc = open_out filename in
+    let _ = Printf.fprintf oc "PassengerId,Survived\n" in
+    List.iteri
+      (fun idx x ->
+        let i = idx + 892 in
+        Printf.fprintf oc "%d,%d\n" i x
+      ) xs;
+    close_out oc
+  in
+  write_list_to_csv ~filename:"data/preds.csv" preds
+
 (* open DT
 
 let () =
@@ -118,7 +309,7 @@ let rec wait_for_space_or_q () =
 let rec wait_for_key_of keys =
   let ev = wait_next_event [Key_pressed] in
   if List.mem ev.key keys then ev.key else wait_for_key_of keys
-let wait_for_mode () = wait_for_key_of ['i'; 'd']
+let wait_for_mode () = wait_for_key_of ['i'; 'd'; 't']
 let wait_for_algo () = wait_for_key_of ['d'; 'a'; 'r'; 'q']
 
 let draw_center_instructions text =
@@ -215,7 +406,7 @@ let interactive_mode () =
       let data = List.map (fun (x,y) -> [|x;y|]) !pts in
       let forest =
         DT.RandomForest.train_forest
-          (data, !labs) (DT.RandomForest.Ratio 0.6) 20 5
+          (data, !labs) (DT.RandomForest.Ratio 0.6) 20 20
       in
       fun (x,y) -> DT.RandomForest.predict_forest forest [|x;y|]
     | _ -> fun _ -> 0
@@ -270,9 +461,11 @@ let () =
   open_graph (sprintf " %dx%d" window_width window_height);
 
   (** mode selection *)
-  draw_center_instructions "Press 'i' for interactive mode or 'd' for display";
+  draw_center_instructions "Press 'i'=interactive, 'd'=display, 't'=Kaggle Titanic test";
   let mode = wait_for_mode () in
   if mode = 'i' then (interactive_mode (); close_graph (); exit 0)
+  else if mode = 't' then (draw_center_instructions "Training random forest for Kaggle Titanic test ... this could take a minute ...";
+                          kaggle_test (); close_graph (); exit 0)
   else if mode = 'd' then ()
   else (close_graph (); exit 0);
 
