@@ -17,5 +17,6 @@ opam install graphics ANSITerminal
 ```
 ### Usage
 ```
+dune build
 dune exec bin/main.exe
 ```
