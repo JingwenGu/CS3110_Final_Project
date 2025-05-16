@@ -13,7 +13,7 @@ git clone git@github.com:JingwenGu/CS3110_Final_Project.git
 
 cd CS3110_Final_Project/DT
 
-opam install graphics ANSITerminal
+opam install graphics ANSITerminal csv
 ```
 ### Usage
 ```
