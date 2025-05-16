@@ -1,21 +1,4 @@
 open DT
-(* 
-let lbl2 (x, y) = if (int_of_float x + int_of_float y) mod 2 = 0 then 0 else 1
-
-let grid w h =
-  let rec f i j ps ls =
-    if i = w then (List.rev ps, List.rev ls)
-    else if j = h then f (i + 1) 0 ps ls
-    else
-      let p = (float i, float j) in
-      f i (j + 1) (p :: ps) (lbl2 p :: ls)
-  in
-  f 0 0 [] []
-
-let ds = grid 4 3
-let t = DT.DecisionTree2D.build_tree ds 0 10
-
-let predicted = List.iter2 (fun p l ->(print_endline ((string_of_float (fst p)) ^ "," ^ (string_of_float (snd p)) ^ "->" ^ (string_of_int l) ^ ":" ^ (string_of_int (DT.DecisionTree2D.predict t p))))) (fst ds) (snd ds) *)
 
 type row = {
   id     : string;
