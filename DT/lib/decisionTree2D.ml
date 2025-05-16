@@ -6,6 +6,10 @@ type split_axis = X | Y
 type decision_tree =
   | Leaf of label
   | Node of split_axis * float * decision_tree * decision_tree
+(** AF: [Node(axis,threshold,left,right)] is the tree node with split axis [axis], threshold value [thershold], and subtrees [left,right].
+        [Leaf(label)] is the leaf node where the prediction is always [label].
+    RI: All points in [left] must have their values for [axis] at most [threshold], 
+        while all points in [left] must have their values for [axis] at least [threshold] *)
 
 (* Split dataset on axis and threshold *)
 let split_dataset ((points, labels) : dataset) (axis : split_axis) (threshold : float) : dataset * dataset =

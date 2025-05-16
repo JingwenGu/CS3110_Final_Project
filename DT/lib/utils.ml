@@ -7,10 +7,6 @@ let count_occurrences labels =
   ) [] labels
 
 let majority_label labels =
-  (* print_endline "utils/majority_label";
-  print_endline (string_of_int(List.length (count_occurrences labels)));
-  (* if List.length (count_occurrences labels) = 0 then print_list labels else (); *)
-  print_list labels; *)
   try 
     fst (List.hd (List.sort (fun (_, a) (_, b) -> compare b a) (count_occurrences labels)))
   with

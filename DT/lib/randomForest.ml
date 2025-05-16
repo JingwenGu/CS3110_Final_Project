@@ -6,8 +6,14 @@ type split_axis = int
 type decision_tree =
   | Leaf of label
   | Node of split_axis * float * decision_tree * decision_tree
+(** AF: [Node(axis,threshold,left,right)] is the tree node with split axis [axis], threshold value [thershold], and subtrees [left,right].
+        [Leaf(label)] is the leaf node where the prediction is always [label].
+    RI: All points in [left] must have their values for [axis] at most [threshold], 
+        while all points in [left] must have their values for [axis] at least [threshold] *)
 
 type decision_forest = decision_tree list
+(** AF: [f1;...;fn] represents the decision forest with trees [f1,...,fn]
+    RI: All [f1,...,fn] must have the same features and should be trained from the same data distribution. *)
 
 type sample_factor = Ratio of float | Size of int
 
